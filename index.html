@@ -15,7 +15,38 @@
     --monza:#D40038;--monza-dk:#A8002C;--shark:#25292E;--shark-2:#31363D;
     --paper:#FFFFFF;--mist:#F4F5F6;--line:#E2E5E8;--ink:#1A1D21;
     --ink-soft:#5C636B;--ink-faint:#9AA1A8;--ok:#1F7A4D;
+    /* surfaces that used to be hardcoded, so a theme can move them */
+    --surface-2:#FAFBFB;      /* inset cards: bay, bench note */
+    --surface-3:#F5F6F7;      /* table headers */
+    --surface-locked:#F1F2F3; /* a control the form has disabled */
+    --tint-monza:#FFF5F7;     /* the active row / over-limit tint */
+    --on-dark:#FFFFFF;        /* text on a strong fill */
+    --ink-strong:#25292E;     /* headings and figures */
+    --fill-strong:#25292E;    /* tab bar, code bar, table headers, tooltips */
+    --fill-strong-2:#31363D;
+    --tt-track:#E4E8EC;--tt-edge:#CFD5DB;--tt-ico:#6B747D;
+    --brand-red:#D40038;--brand-red-hi:#EF1B4F;
+    --logo-filter:none;
+    /* rack schematic - painted steel, so it keeps its colour in both themes
+       and only lifts enough to stay readable on a dark card */
+    --rv-panel:#2B4C7E;--rv-panel-dk:#1B3457;
+    --rv-drawer:#27496D;--rv-drawer-dk:#16304F;
+    --rv-tray:#6E7C8A;--rv-tray-dk:#4E5A66;
     --r:10px;--shadow:0 1px 2px rgba(37,41,46,.06),0 8px 28px rgba(37,41,46,.08);
+  }
+  :root[data-theme="dark"]{
+    --paper:#1C2026;--mist:#14171B;--line:#2E343B;--ink:#E8EBEE;
+    --ink-soft:#A3ACB5;--ink-faint:#6F7881;
+    --monza:#E8003F;--monza-dk:#D40038;--ok:#3FBE84;
+    --surface-2:#232830;--surface-3:#232830;--surface-locked:#20252B;
+    --tint-monza:#2A1922;--on-dark:#FFFFFF;
+    --ink-strong:#F2F5F7;--fill-strong:#0E1115;--fill-strong-2:#2A3039;
+    --tt-track:#2A3039;--tt-edge:#39414A;--tt-ico:#9BA4AD;
+    --logo-filter:brightness(0) invert(1);
+    --rv-panel:#4A7AB8;--rv-panel-dk:#2E557F;
+    --rv-drawer:#3F6A9E;--rv-drawer-dk:#24405F;
+    --rv-tray:#8E9BA8;--rv-tray-dk:#5E6B78;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 28px rgba(0,0,0,.45);
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:"Inter","Helvetica Neue",Arial,sans-serif;color:var(--ink);
@@ -26,17 +57,44 @@
   .topbar{background:var(--paper);border-bottom:1px solid var(--line);
     display:flex;align-items:center;justify-content:center;
     padding:14px 0;min-height:84px;position:sticky;top:0;z-index:20;}
+  .topbar{position:sticky;}
   .brand{display:flex;align-items:center;justify-content:center;}
+  .brand-img{filter:var(--logo-filter);}
+  /* Light / dark switch. Pill track, sliding Monza knob, glyphs drawn inline. */
+  .theme-toggle{position:absolute;right:clamp(16px,4vw,40px);top:50%;transform:translateY(-50%);
+    background:none;border:none;padding:6px;cursor:pointer;line-height:0;border-radius:999px;}
+  .theme-toggle:focus-visible{outline:2px solid var(--monza);outline-offset:2px;}
+  .tt-track{position:relative;display:block;width:62px;height:30px;border-radius:999px;
+    background:var(--tt-track);border:1px solid var(--tt-edge);
+    transition:background .22s ease,border-color .22s ease;}
+  /* the track carries the mode you would switch TO; the knob carries the live one */
+  .tt-ico{position:absolute;top:7px;width:16px;height:16px;fill:none;
+    stroke:var(--tt-ico);stroke-width:1.9;transition:opacity .18s ease;}
+  .tt-sun{left:7px;}
+  .tt-moon{right:7px;fill:var(--tt-ico);stroke:none;}
+  .tt-knob{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;
+    background:var(--monza);box-shadow:0 1px 3px rgba(0,0,0,.35);
+    display:flex;align-items:center;justify-content:center;
+    transition:transform .22s cubic-bezier(.4,.9,.3,1.3),background .22s ease;}
+  .tt-kico{width:14px;height:14px;fill:none;stroke:var(--on-dark);stroke-width:2;}
+  .tt-kmoon{fill:var(--on-dark);stroke:none;}
+  :root[data-theme="dark"] .tt-knob{transform:translateX(32px);}
+  :root:not([data-theme="dark"]) .tt-sun,
+  :root:not([data-theme="dark"]) .tt-kmoon{display:none;}
+  :root[data-theme="dark"] .tt-moon,
+  :root[data-theme="dark"] .tt-ksun{display:none;}
+  .theme-toggle:hover .tt-knob{background:var(--monza-dk);}
+  @media(max-width:640px){.theme-toggle{display:none;}}
   .brand-img{height:60px;width:auto;display:block;}
-  .rev-badge{position:absolute;top:50%;right:clamp(16px,4vw,40px);transform:translateY(-50%);
-    color:#DBD7D2;font-size:13px;font-weight:700;letter-spacing:.08em;}
-  .brand-logo{font-weight:800;letter-spacing:.5px;font-size:19px;color:var(--shark);
+  .rev-badge{position:absolute;top:50%;left:clamp(16px,4vw,40px);transform:translateY(-50%);
+    color:var(--ink-faint);font-size:13px;font-weight:700;letter-spacing:.08em;opacity:.65;}
+  .brand-logo{font-weight:800;letter-spacing:.5px;font-size:19px;color:var(--ink-strong);
     display:flex;align-items:center;gap:9px;}
   .brand-logo .spark{width:0;height:0;border-style:solid;border-width:0 0 19px 19px;
     border-color:transparent transparent var(--monza) transparent;display:inline-block;transform:translateY(1px);}
   .brand-sub{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);font-weight:600;}
   .topbar .vanwt{font-size:13px;color:var(--ink-soft);display:flex;align-items:baseline;gap:8px;}
-  .topbar .vanwt b{font-size:17px;color:var(--shark);font-weight:750;font-variant-numeric:tabular-nums;}
+  .topbar .vanwt b{font-size:17px;color:var(--ink-strong);font-weight:750;font-variant-numeric:tabular-nums;}
 
   /* LAYOUT */
   .stage{max-width:1260px;margin:0 auto;padding:clamp(16px,3vw,30px);}
@@ -49,9 +107,9 @@
   .mp-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);
     box-shadow:var(--shadow);overflow:hidden;}
   .mp-head{padding:22px 26px 6px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;}
-  .mp-head h1{font-size:20px;font-weight:750;color:var(--shark);letter-spacing:-.01em;}
+  .mp-head h1{font-size:20px;font-weight:750;color:var(--ink-strong);letter-spacing:-.01em;}
   .mp-head p{font-size:13px;color:var(--ink-soft);margin-top:3px;}
-  .pdf-btn{background:var(--monza);color:#fff;border:none;border-radius:8px;padding:11px 20px;
+  .pdf-btn{background:var(--monza);color:var(--on-dark);border:none;border-radius:8px;padding:11px 20px;
     font-size:14px;font-weight:650;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:background .15s;}
   .pdf-btn:hover{background:#ef1b4f;}
   .pdf-btn:active{transform:translateY(1px);}
@@ -61,30 +119,46 @@
   @media(max-width:720px){.mp-job{grid-template-columns:1fr;}}
   .mp-field label{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
     color:var(--ink-faint);font-weight:700;margin-bottom:6px;}
+  /* Same surface, border and text colour as the dropdowns, so a typed field and a
+     chosen one match in either theme. Without an explicit background these fell
+     back to the browser's white, which left dark text on white inside a dark card. */
   .mp-field input{width:100%;font:inherit;font-size:14px;color:var(--ink);
+    background:var(--paper);
     border:1px solid var(--line);border-radius:7px;padding:9px 12px;transition:border-color .15s,box-shadow .15s;}
+  .mp-field input::placeholder{color:var(--ink-faint);}
   .mp-field input:focus{outline:none;border-color:var(--monza);box-shadow:0 0 0 3px rgba(212,0,56,.12);}
-  .quote-wrap{display:flex;align-items:stretch;border:1px solid var(--line);border-radius:7px;overflow:hidden;}
+  .quote-wrap{display:flex;align-items:stretch;border:1px solid var(--line);border-radius:7px;overflow:hidden;
+    background:var(--paper);}
   .quote-wrap:focus-within{border-color:var(--monza);box-shadow:0 0 0 3px rgba(212,0,56,.12);}
-  .quote-prefix{background:var(--shark);color:#fff;font-weight:700;font-size:14px;
+  .quote-prefix{background:var(--fill-strong);color:var(--on-dark);font-weight:700;font-size:14px;
     display:flex;align-items:center;padding:0 12px;letter-spacing:.04em;}
   .quote-wrap input{border:none;border-radius:0;flex:1;box-shadow:none!important;}
   .mp-vehicle{font-size:14px;color:var(--ink);font-weight:600;padding:9px 0;}
   .mp-field label.sub{margin-top:10px;}
+  .section.locked{opacity:.42;}
+  .section.locked .sec-label .bar{background:var(--line);}
+  .bench-note{margin-top:10px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2);
+    padding:11px 13px;font-size:12.5px;color:var(--ink);}
+  .bench-note b{display:block;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--faint);margin-bottom:5px;}
+  .bench-note .bdim{color:var(--monza);font-weight:700;}
+  .bench-note ul{margin:6px 0 0;padding-left:16px;}
+  .bench-note li{margin:2px 0;}
+  .code.unshareable{color:var(--monza)!important;font-size:.82em;letter-spacing:.04em;}
   .quote-row{display:flex;gap:8px;align-items:stretch;}
   .quote-row .quote-wrap{flex:1;min-width:0;}
   .quote-row .rev-wrap{flex:0 0 104px;}
-  .rev-wrap .quote-prefix{background:var(--shark);font-size:12px;padding:0 9px;}
+  .rev-wrap .quote-prefix{background:var(--fill-strong);font-size:12px;padding:0 9px;}
   .rev-wrap input{text-align:center;padding-left:6px;padding-right:6px;}
-  .van-info-display{font-size:14px;color:var(--shark);font-weight:600;padding:8px 0;letter-spacing:-.01em;}
-  .van-spec{margin-top:8px;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff;}
+  .van-info-display{font-size:14px;color:var(--ink-strong);font-weight:600;padding:8px 0;letter-spacing:-.01em;}
+  .van-spec{margin-top:8px;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--paper);}
   .van-spec-dims{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);}
-  .van-spec-dims .vd{background:#fff;padding:9px 12px;}
+  .van-spec-dims .vd{background:var(--paper);padding:9px 12px;}
   .van-spec-dims .vd .k{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:700;}
-  .van-spec-dims .vd .v{font-size:14px;font-weight:700;color:var(--shark);margin-top:1px;font-variant-numeric:tabular-nums;}
+  .van-spec-dims .vd .v{font-size:14px;font-weight:700;color:var(--ink-strong);margin-top:1px;font-variant-numeric:tabular-nums;}
   .van-spec-dims .vd.na .v{color:var(--faint);font-weight:500;}
   /* constraint warning on rack dropdowns */
-  select.over-limit{border-color:var(--monza)!important;background:#fff5f7;color:var(--monza);font-weight:600;}
+  select.over-limit{border-color:var(--monza)!important;background:var(--tint-monza);color:var(--monza);font-weight:600;}
   .limit-warn{font-size:11.5px;color:var(--monza);font-weight:600;margin-top:6px;display:none;}
   .limit-warn.show{display:block;}
   .mp-sel select{width:100%;font-size:13px;}
@@ -94,20 +168,36 @@
   .mp-shead{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);font-weight:700;}
   .mp-srow .mp-r,.mp-shead .mp-r{text-align:right;}
   .mp-parts{margin-top:26px;border:1px solid var(--line);border-radius:8px;overflow:hidden;}
-  .mp-parts-title{background:var(--shark);color:#fff;font-size:12px;font-weight:700;
-    letter-spacing:.12em;padding:9px 14px;text-align:center;}
+  .mp-parts-title{background:var(--fill-strong);color:var(--on-dark);font-size:12px;font-weight:700;
+    letter-spacing:.12em;padding:9px 14px;text-align:center;
+    display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .mp-parts-title .pt-label{flex:1;text-align:center;padding-left:118px;}
+  .pt-actions{display:flex;gap:6px;flex:0 0 auto;}
+  /* These always sit on the dark parts bar, so they take the brand red straight
+     rather than the theme's lifted one - and stay red when disabled, just dimmed,
+     so they read as unavailable without turning grey. */
+  .pt-btn{background:var(--brand-red);color:var(--on-dark);border:1px solid var(--brand-red);border-radius:6px;
+    font:inherit;font-size:10.5px;letter-spacing:.06em;padding:4px 10px;cursor:pointer;
+    transition:background .15s,border-color .15s,opacity .15s;}
+  .pt-btn:hover:not(:disabled){background:var(--brand-red-hi);border-color:var(--brand-red-hi);}
+  .pt-btn:active:not(:disabled){transform:translateY(1px);}
+  .pt-btn:disabled{opacity:.42;cursor:default;}
+  @media(max-width:720px){
+    .mp-parts-title{flex-wrap:wrap;}
+    .mp-parts-title .pt-label{padding-left:0;}
+  }
   .mp-prow{display:grid;grid-template-columns:.5fr .6fr 1.1fr 1.4fr 1fr .7fr .7fr .7fr;gap:8px;
     padding:7px 14px;font-size:12.5px;align-items:center;text-align:center;border-bottom:1px solid var(--line);}
   .mp-prow:last-child{border-bottom:none;}
-  .mp-phead{background:#f5f6f7;font-size:10px;font-weight:700;letter-spacing:.06em;
+  .mp-phead{background:var(--surface-3);font-size:10px;font-weight:700;letter-spacing:.06em;
     text-transform:uppercase;color:var(--soft);}
   .mp-prow .mp-r,.mp-phead .mp-r{text-align:center;}
-  .mp-prow .mp-pn{font-weight:600;color:var(--shark);}
-  .mp-prow.alt{background:#fafbfb;}
-  .mp-pos{font-weight:700;color:var(--shark);}
+  .mp-prow .mp-pn{font-weight:600;color:var(--ink-strong);}
+  .mp-prow.alt{background:var(--surface-2);}
+  .mp-pos{font-weight:700;color:var(--ink-strong);}
   .mp-code{font-size:12px;font-weight:600;color:var(--monza);letter-spacing:.03em;}
   .mp-code.none{color:var(--ink-faint);font-weight:500;}
-  .mp-wt{text-align:right;font-weight:700;color:var(--shark);font-variant-numeric:tabular-nums;}
+  .mp-wt{text-align:right;font-weight:700;color:var(--ink-strong);font-variant-numeric:tabular-nums;}
   .mp-wt.empty{color:var(--ink-faint);font-weight:500;}
   .mp-muted{color:var(--ink-soft);}
   .mp-total{display:flex;align-items:center;justify-content:space-between;
@@ -120,8 +210,9 @@
   .tab{background:var(--paper);border:1px solid var(--line);border-radius:8px;
     padding:9px 15px;font-size:13px;font-weight:600;color:var(--ink-soft);cursor:pointer;
     transition:all .15s;display:flex;align-items:center;gap:8px;}
-  .tab:hover{border-color:#c4c9ce;color:var(--shark);}
-  .tab.active{background:var(--shark);border-color:var(--shark);color:#fff;}
+  .tab:hover{border-color:#c4c9ce;color:var(--ink-strong);}
+  .tab.active{background:var(--fill-strong);border-color:var(--ink-strong);color:var(--on-dark);}
+  :root[data-theme="dark"] .tab.active{border-color:var(--monza);}
   .tab .dot{width:7px;height:7px;border-radius:50%;background:var(--ink-faint);}
   .tab.active .dot{background:var(--monza);}
   .tab.filled .dot{background:var(--ok);}
@@ -131,7 +222,7 @@
   .form{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);
     box-shadow:var(--shadow);overflow:hidden;}
   .form-head{padding:20px 22px 4px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;}
-  .form-head h1{font-size:18px;font-weight:750;color:var(--shark);letter-spacing:-.01em;}
+  .form-head h1{font-size:18px;font-weight:750;color:var(--ink-strong);letter-spacing:-.01em;}
   .form-head .pos{color:var(--monza);}
   .form-head p{font-size:13px;color:var(--ink-soft);margin-top:2px;}
   .reset-btn{background:var(--monza);flex-shrink:0;}
@@ -140,7 +231,7 @@
   .section+.section{border-top:1px solid var(--line);padding-top:18px;}
   .sec-label{display:flex;align-items:center;gap:9px;margin:10px 0 12px;}
   .sec-label .bar{width:3px;height:14px;background:var(--monza);border-radius:2px;}
-  .sec-label h3{font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--shark);font-weight:700;}
+  .sec-label h3{font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-strong);font-weight:700;}
   .row{display:grid;grid-template-columns:120px 1fr;align-items:center;gap:14px;padding:5px 0;max-width:340px;}
   .row label{font-size:14px;color:var(--ink);font-weight:500;}
   .row .control,.row .inline2{justify-self:start;width:100%;}
@@ -178,15 +269,52 @@
   .tg-cell select{width:100%;min-width:0;font-size:12.5px;padding:7px 26px 7px 9px;}
   .tg-row-off select{color:var(--ink-faint);background:var(--mist);}
   .tg-row-off .tg-wt{color:var(--ink-faint);}
+  /* A slot the drawer band leaves no height for, so it can't be told apart from
+     an empty slot that is still free to use. */
+  /* Height budget shown on hover rather than as standing text under the grid —
+     it's only wanted at the moment you're choosing a tray. */
+  .tg-cell[data-tip]{position:relative;}
+  .tg-cell[data-tip]:hover::after{
+    content:attr(data-tip);position:absolute;left:0;top:calc(100% + 7px);z-index:40;
+    background:var(--fill-strong);color:var(--on-dark);font-size:11.5px;font-weight:500;line-height:1.5;
+    padding:8px 11px;border-radius:7px;width:max-content;max-width:250px;white-space:normal;
+    box-shadow:0 7px 20px rgba(0,0,0,.2);pointer-events:none;}
+  .tg-cell[data-tip]:hover::before{
+    content:"";position:absolute;left:16px;top:calc(100% + 2px);z-index:41;
+    border:5px solid transparent;border-bottom-color:var(--ink-strong);pointer-events:none;}
+  .tg-row-locked select{background:var(--surface-locked);border-style:dashed;cursor:not-allowed;}
+  .tg-row-locked .control::after{opacity:.35;}
+  .tg-row-locked .tg-wt{color:var(--ink-faint);font-size:11px;font-style:italic;}
   .tg-cell select{width:100%;min-width:0;font-size:12.5px;padding:7px 26px 7px 9px;}
   textarea{width:100%;font-size:13px;resize:vertical;min-height:58px;padding:10px 12px;margin-top:2px;}
   textarea::placeholder{color:var(--ink-faint);}
+  /* Autofill repaints the field, so the fill is faked with an inset shadow and the
+     text colour is forced, otherwise a remembered value comes back white-on-white. */
+  input:-webkit-autofill,input:-webkit-autofill:hover,input:-webkit-autofill:focus{
+    -webkit-text-fill-color:var(--ink);
+    -webkit-box-shadow:0 0 0 1000px var(--paper) inset;
+    box-shadow:0 0 0 1000px var(--paper) inset;
+    caret-color:var(--ink);transition:background-color 9999s ease-out;}
   .inline2{display:flex;gap:8px;}.inline2 .control{flex:1;}.inline2 select{min-width:0;width:100%;}
-  .codebar{background:var(--shark);color:#fff;padding:15px 22px;display:flex;
+  /* Drawer band. One bay card when the rack is 500/750, two side by side with the
+     infill divider drawn between them when the rack splits. */
+  .bay-grid{display:grid;grid-template-columns:1fr;gap:10px;align-items:stretch;}
+  .bay-grid.split{grid-template-columns:1fr 14px 1fr;gap:0 8px;}
+  .bay-div{grid-column:2;grid-row:1;justify-self:center;width:3px;background:var(--monza);
+    border-radius:2px;align-self:stretch;margin:2px 0;}
+  .bay{border:1px solid var(--line);border-radius:8px;background:var(--surface-2);padding:10px 12px 12px;}
+  .bay-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:8px;}
+  .bay-name{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--ink-faint);font-weight:700;}
+  .bay-w{font-size:11.5px;font-weight:700;color:var(--monza);font-variant-numeric:tabular-nums;}
+  .bay select{width:100%;min-width:0;font-size:12.5px;padding:7px 26px 7px 9px;}
+  .bay-sub{font-size:11.5px;color:var(--ink-soft);margin-top:7px;line-height:1.45;}
+  .bay-sub.off{color:var(--ink-faint);}
+  .codebar{background:var(--fill-strong);color:var(--on-dark);padding:15px 22px;display:flex;
     align-items:center;justify-content:space-between;gap:14px;}
   .codebar .lab{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#aeb6bf;font-weight:600;}
   .codebar .code{font-size:18px;font-weight:700;letter-spacing:.1em;color:var(--monza);margin-top:3px;}
-  .copy-btn{background:var(--monza);color:#fff;border:none;border-radius:7px;padding:10px 16px;
+  .copy-btn{background:var(--monza);color:var(--on-dark);border:none;border-radius:7px;padding:10px 16px;
     font-size:13px;font-weight:650;cursor:pointer;white-space:nowrap;transition:background .15s;}
   .copy-btn:hover{background:#ef1b4f;}.copy-btn:active{transform:translateY(1px);}
   .copy-btn.copied{background:var(--ok);}
@@ -199,17 +327,28 @@
   .preview-head p{font-size:12px;color:var(--ink-faint);margin-top:2px;}
   .van-row{padding:14px 20px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .12s;}
   .van-row:hover{background:var(--mist);}
-  .van-row.active{background:#fff5f7;box-shadow:inset 3px 0 0 var(--monza);}
+  .van-row.active{background:var(--tint-monza);box-shadow:inset 3px 0 0 var(--monza);}
   .van-row .top{display:flex;align-items:baseline;justify-content:space-between;}
-  .van-row .name{font-size:14px;font-weight:700;color:var(--shark);}
+  .van-row .name{font-size:14px;font-weight:700;color:var(--ink-strong);}
   .van-row .row-warn{color:var(--monza);font-weight:700;cursor:help;margin-left:2px;}
   .mp-pos .row-warn{color:var(--monza);font-weight:700;cursor:help;margin-left:2px;}
-  .van-row .wt{font-size:14px;font-weight:700;color:var(--shark);font-variant-numeric:tabular-nums;}
+  .van-row .wt{font-size:14px;font-weight:700;color:var(--ink-strong);font-variant-numeric:tabular-nums;}
   .van-row .wt.empty{color:var(--ink-faint);font-weight:500;}
   .van-row .meta{font-size:12px;color:var(--ink-soft);margin-top:3px;display:flex;gap:10px;flex-wrap:wrap;}
   .van-row .meta .dim{font-variant-numeric:tabular-nums;}
   .van-row .code{font-size:11.5px;color:var(--monza);font-weight:600;margin-top:5px;letter-spacing:.04em;}
   .van-row .code.none{color:var(--monza);font-weight:600;letter-spacing:.04em;}
+  /* Rack layout schematic, under the van overview */
+  .rack-vis{border-top:1px solid var(--line);}
+  .rv-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:14px 20px 10px;}
+  .rv-head h3{font-size:11.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-soft);font-weight:700;}
+  .rv-head span{font-size:11px;color:var(--ink-faint);font-variant-numeric:tabular-nums;}
+  .rv-stage{padding:4px 20px 12px;height:330px;display:flex;align-items:center;justify-content:center;}
+  .rv-stage>div{width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
+  .rv-empty{font-size:12.5px;color:var(--ink-faint);}
+  .rv-foot{padding:0 20px 14px;font-size:10.5px;color:var(--ink-faint);line-height:1.5;}
+  .rv-warn{padding:0 20px 12px;font-size:11px;color:var(--monza);font-weight:600;line-height:1.5;display:none;}
+  .rv-warn.show{display:block;}
   .van-total{padding:18px 20px;display:flex;align-items:center;justify-content:space-between;background:var(--mist);}
   .van-total .lab{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);font-weight:700;}
   .van-total .val{font-size:24px;font-weight:800;color:var(--monza);font-variant-numeric:tabular-nums;}
@@ -219,10 +358,10 @@
   @media(max-width:920px){.preview{position:static;}}
   @media(prefers-reduced-motion:reduce){*{transition:none!important;}}
   .importbar{display:flex;gap:10px;align-items:stretch;margin-top:10px;}
-  .import-input{flex:1;min-width:0;font-family:ui-monospace,Consolas,monospace;font-size:14px;letter-spacing:.05em;text-transform:uppercase;padding:12px 14px;border:1px solid var(--line);border-radius:8px;color:var(--shark);background:#fff;}
+  .import-input{flex:1;min-width:0;font-family:ui-monospace,Consolas,monospace;font-size:14px;letter-spacing:.05em;text-transform:uppercase;padding:12px 14px;border:1px solid var(--line);border-radius:8px;color:var(--ink-strong);background:var(--paper);}
   .import-input::placeholder{text-transform:none;letter-spacing:normal;color:var(--ink-faint);}
   .import-input:focus{outline:none;border-color:var(--monza);}
-  .import-btn{background:var(--monza);color:#fff;border:none;border-radius:8px;padding:12px 20px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:.15s;}
+  .import-btn{background:var(--monza);color:var(--on-dark);border:none;border-radius:8px;padding:12px 20px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:.15s;}
   .import-btn:hover{background:var(--monza-dk);}
   .import-hint{font-size:11px;color:var(--ink-faint);margin-top:6px;text-align:center;}
 </style>
@@ -233,7 +372,30 @@
   <div class="brand">
     <img class="brand-img" src="data:image/png;base64,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AAAAgNGREAEAAAAAAAAAjI6ECAAAAAAAAABgdCREAAAAAAAAAACjIyECAAAAAAAAABgdCREAAAAAAAAAwOhIiAAAAAAAAAAARkdCBAAAAAAAAAAwOhIiAAAAAAAAAIDRkRABAAAAAAAAAIyOhAgAAAAAAAAAYHQkRAAAAAAAAAAAoyMhAgAAAAAAAAAYHQkRAAAAAAAAAMDoSIgAAAAAAAAAAEZHQgQAAAAAAAAAMDoSIgAAAAAAAACA0ZEQAQAAAAAAAACMjoQIAAAAAAAAAGB0JEQAAAAAAAAAAKMjIQIAAAAAAAAAGB0JEQAAAAAAAADA6EiIAAAAAAAAAABGR0IEAAAAAAAAADA6EiIAAAAAAAAAgNGREAEAAAAAAAAAjI6ECAAAAAAAAABgdCREAAAAAAAAAACjIyECAAAAAAAAABgdCREAAAAAAAAAwOhIiAAAAAAAAAAARkdCBAAAAAAAAAAwOhIiAAAAAAAAAIDRkRABAAAAAAAAAIyOhAgAAAAAAAAAYHQkRAAAAAAAAAAAoyMhAgAAAAAAAAAYHQkRAAAAAAAAAMDoSIgAAAAAAAAAAEZHQgQAAAAAAAAAMDoSIgAAAAAAAACA0ZEQAQAAAAAAAACMjoQIAAAAAAAAAGB0JEQAAAAAAAAAAKMjIQIAAAAAAAAAGB0JEQAAAAAAAADA6Px/0DykYaYNHTIAAAAASUVORK5CYII=" alt="Mackworth Vehicle Conversions">
   </div>
-  <div class="rev-badge">V0.35</div>
+  <div class="rev-badge">V0.51</div>
+  <button class="theme-toggle" id="themeToggle" type="button" role="switch"
+          aria-checked="false" aria-label="Switch between light and dark">
+    <span class="tt-track">
+      <svg class="tt-ico tt-sun" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4.4"/>
+        <g stroke-linecap="round"><path d="M12 2.6v2.6M12 18.8v2.6M2.6 12h2.6M18.8 12h2.6
+          M5.4 5.4l1.9 1.9M16.7 16.7l1.9 1.9M18.6 5.4l-1.9 1.9M7.3 16.7l-1.9 1.9"/></g>
+      </svg>
+      <svg class="tt-ico tt-moon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20 14.2A8.4 8.4 0 0 1 9.8 4a8.6 8.6 0 1 0 10.2 10.2z"/>
+      </svg>
+      <span class="tt-knob">
+        <svg class="tt-kico tt-ksun" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.4"/>
+          <g stroke-linecap="round"><path d="M12 2.6v2.6M12 18.8v2.6M2.6 12h2.6M18.8 12h2.6
+            M5.4 5.4l1.9 1.9M16.7 16.7l1.9 1.9M18.6 5.4l-1.9 1.9M7.3 16.7l-1.9 1.9"/></g>
+        </svg>
+        <svg class="tt-kico tt-kmoon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M20 14.2A8.4 8.4 0 0 1 9.8 4a8.6 8.6 0 1 0 10.2 10.2z"/>
+        </svg>
+      </span>
+    </span>
+  </button>
 </header>
 
 <main class="stage" id="stage">
@@ -264,7 +426,7 @@
           <div class="quote-row">
             <div class="quote-wrap">
               <span class="quote-prefix">MVCS</span>
-              <input type="text" id="quoteNum" placeholder="04821">
+              <input type="text" id="quoteNum" placeholder="04821" inputmode="numeric" title="Quote number \u2014 digits only, the MVCS prefix is added automatically">
             </div>
             <div class="quote-wrap rev-wrap">
               <span class="quote-prefix">REV</span>
@@ -282,17 +444,24 @@
 
       <div class="mp-summary">
         <div class="mp-srow mp-shead">
-          <span>Position</span><span>Dimensions (mm)</span><span>Trays</span><span>Storage</span><span>Components</span><span class="mp-r">Weight</span>
+          <span>Position</span><span>Dimensions (L × H × D, mm)</span><span>Trays</span><span>Storage</span><span>Components</span><span class="mp-r">Weight</span>
         </div>
         <div id="mpRows"></div>
         <div class="mp-total">
           <span>VAN TOTAL WEIGHT</span>
           <span class="mp-total-val" id="mpVanTotal">0.000 kg</span>
         </div>
+        <div class="limit-warn" id="mpWtNote"></div>
       </div>
 
       <div class="mp-parts" id="mpPartsWrap">
-        <div class="mp-parts-title">PARTS DWG</div>
+        <div class="mp-parts-title">
+          <span class="pt-label">PARTS LIST</span>
+          <span class="pt-actions">
+            <button class="pt-btn" id="partsPdfBtn" title="Export just the parts list as a PDF">PDF</button>
+            <button class="pt-btn" id="partsXlsBtn" title="Export just the parts list as an Excel spreadsheet">EXCEL</button>
+          </span>
+        </div>
         <div class="mp-prow mp-phead">
           <span>Item</span><span class="mp-r">Item Qty</span><span>Part Number</span>
           <span>Description</span><span>Stock Number</span>
@@ -324,27 +493,30 @@
         </div>
       </div>
 
-      <div class="section">
+      <div class="section" id="rackSection">
         <div class="sec-label"><span class="bar"></span><h3>Rack</h3></div>
         <div class="row"><label for="height">Height</label>
           <div class="control"><select id="height">
+            <option value="" selected>Select…</option>
             <option value="905">905 mm</option><option value="1150">1150 mm</option>
-            <option value="1220" selected>1220 mm</option><option value="1640">1640 mm</option>
+            <option value="1220">1220 mm</option><option value="1640">1640 mm</option>
           </select></div></div>
         <div class="row"><label for="length">Length</label>
           <div class="control"><select id="length">
+            <option value="" selected>Select…</option>
             <option value="500">500 mm</option><option value="750">750 mm</option>
-            <option value="1000" selected>1000 mm</option><option value="1250">1250 mm</option>
+            <option value="1000">1000 mm</option><option value="1250">1250 mm</option>
             <option value="1500">1500 mm</option>
           </select></div></div>
         <div class="row"><label for="depth">Depth</label>
           <div class="control"><select id="depth">
-            <option value="320">320 mm</option><option value="420" selected>420 mm</option>
+            <option value="" selected>Select…</option>
+            <option value="320">320 mm</option><option value="420">420 mm</option>
           </select></div></div>
         <div class="limit-warn" id="limitWarn"></div>
       </div>
 
-      <div class="section">
+      <div class="section" id="traySection">
         <div class="sec-label"><span class="bar"></span><h3>Trays</h3></div>
         <div class="trays-grid-wrap" id="trayGrid">
           <!-- header (row 1) -->
@@ -358,7 +530,25 @@
         <div class="limit-warn" id="trayNote"></div>
       </div>
 
-      <div class="section">
+      <div class="section" id="drawerSection">
+        <div class="sec-label"><span class="bar"></span><h3>Drawer units</h3></div>
+        <div class="bay-grid" id="bayGrid"></div>
+        <div class="row" id="bandSlotRow" style="margin-top:10px"><label for="bandSlot">In slot</label>
+          <div class="control"><select id="bandSlot">
+            <option value="1">1 &mdash; top</option><option value="2">2</option>
+            <option value="3" selected>3</option><option value="4">4 &mdash; bottom</option>
+          </select></div></div>
+        <div class="limit-warn" id="drawerWarn"></div>
+      </div>
+
+      <div class="section" id="benchSection">
+        <div class="sec-label"><span class="bar"></span><h3>Workbench</h3></div>
+        <div class="row"><label for="benchType">Assembly</label>
+          <div class="control"><select id="benchType"></select></div></div>
+        <div class="bench-note" id="benchNote" style="display:none"></div>
+      </div>
+
+      <div class="section" id="compSection">
         <div class="sec-label"><span class="bar"></span><h3>Components</h3></div>
         <div class="row"><label for="kick">Kick strip</label>
           <div class="inline2">
@@ -379,6 +569,7 @@
               <option value="2000" selected>2000 mm</option><option value="2250">2250 mm</option>
               <option value="2500">2500 mm</option><option value="2750">2750 mm</option>
               <option value="3000">3000 mm</option>
+              <option value="2990">2990 mm &#183; R286 (200 deep)</option>
             </select></div>
           </div></div>
       </div>
@@ -408,6 +599,12 @@
         <p>All five positions. Click a row to edit it.</p>
       </div>
       <div id="vanRows"></div>
+      <div class="rack-vis" id="rackVis">
+        <div class="rv-head"><h3>Rack layout &mdash; mini showcase</h3><span id="rvDims">&mdash;</span></div>
+        <div class="rv-stage"><div id="rvOut"></div></div>
+        <div class="rv-warn" id="rvWarn"></div>
+        <div class="rv-foot">Image not to scale.</div>
+      </div>
       <div class="van-total">
         <span class="lab">Van total weight</span>
         <span class="val" id="vanTotal">0.000 <small>kg</small></span>
@@ -824,11 +1021,24 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
 const LEN_CODE={500:"A",750:"B",1000:"C",1250:"D",1500:"E"};
 const DEP_CODE={320:"3",420:"4"};
 const HGT_CODE={905:"A",1150:"B",1220:"C",1640:"D"};
-/* Tapered Tray 100x75 — 100mm at the front tapering to 75mm at the back.
-   Only exists as a part at 960 and 1210 internal length (rack length 1000 / 1250). */
+/* Tapered Tray 100x75 \u2014 100mm at the front tapering to 75mm at the back.
+   Only made at 960 and 1210 internal length (rack length 1000 / 1250).
+   Deliberately absent from TRAY_CODE: the share code format is unchanged from
+   V0.34, so a rack carrying a tapered tray simply has no share code. */
 const TAPERED="Tapered Tray 100x75";
-const TRAY_CODE={"30mm Tray":"A","100mm Tray":"B","Drop Front Tray":"C",[TAPERED]:"T","(none)":"N"};
+const TRAY_CODE={"30mm Tray":"A","100mm Tray":"B","Drop Front Tray":"C","(none)":"N"};
 const TROUGH_CODE={1500:"1",1750:"2",2000:"3",2250:"4",2500:"5",2750:"6",3000:"7"};
+/* R286-PA-006-01 — a fixed trough, 2990 long x 120 high x 200 deep. It is a single
+   part number regardless of rack depth, and it has no letter in TROUGH_CODE, so a
+   rack fitted with it carries no share code (same rule as the tapered tray). */
+const TROUGH_R286=2990;
+const TROUGH_R286_PART="R286-PA-006-01";
+const TROUGH_R286_H=120, TROUGH_R286_D=200;
+/* PLACEHOLDER — no weight supplied for R286-PA-006-01. Sitting just under the
+   3000x320 trough (6.0kg) since this one is only 200mm deep. Replace when known. */
+const TROUGH_R286_WT=5.0;
+function troughIsR286(c){return c.trough==="Yes" && +c.troughLen===TROUGH_R286;}
+function troughHeight(c){return troughIsR286(c)?TROUGH_R286_H:100;}
 const INT_LEN={500:460,750:710,1000:960,1250:1210,1500:1460};
 function endPanelWt(h,d){const b={905:2.9,1150:3.4,1220:3.6,1640:4.6};return b[h]*(d==420?1.18:1);}
 function trayWt(t,len,d){if(t==="(none)")return 0;
@@ -837,16 +1047,335 @@ function trayWt(t,len,d){if(t==="(none)")return 0;
   if(t==="100mm Tray")return +(pl*1.15*f).toFixed(3);
   if(t==="Drop Front Tray")return +(pl*1.30*f).toFixed(3);
   if(t===TAPERED)return +(pl*TAPERED_WT_FACTOR*f).toFixed(3);return 0;}
-/* PLACEHOLDER — real weight for the tapered tray not supplied yet. Sitting just
-   under the straight 100mm tray (1.15) since the taper removes material.
-   Replace with the measured figure when it's known. */
+/* PLACEHOLDER \u2014 real weight for the tapered tray not supplied yet. Sitting just
+   under the straight 100mm tray (1.15) since the taper removes material. */
 const TAPERED_WT_FACTOR=1.08;
+/* Dimensions read L x H x D with the axis letter on each number, so the order can't
+   be misread on a quote and an old quote can't be confused with a new one. */
+/* Nothing is pre-selected, so a position has no size until one is chosen. Until
+   then it cannot be built, weighed or priced, and every surface treats it as
+   unconfigured rather than guessing a default. */
+function dimsSet(c){ return !!(c && c.height && c.length && c.depth); }
+function dimStr(c,sep){
+  if(!dimsSet(c)) return "\u2014";
+  return c.length+"L "+(sep||"\u00d7")+" "+c.height+"H "+(sep||"\u00d7")+" "+c.depth+"D";
+}
 function kickN(c){if(!c)return 0;const k=c.kick;if(!k||k==="No")return 0;if(k==="2")return 2;return (+c.kickQty===2)?2:1;}
 function kickWt(len){return +({500:1.1,750:1.5,1000:1.95,1250:2.4,1500:2.85}[len]||0).toFixed(3);}
-function troughWt(tl,d){const b={1500:3,1750:3.5,2000:4,2250:4.5,2500:5,2750:5.5,3000:6}[tl]||0;return +(b*(d==420?1.15:1)).toFixed(3);}
+function troughWt(tl,d){
+  if(+tl===TROUGH_R286) return TROUGH_R286_WT;   // fixed 200mm-deep part, depth-independent
+  const b={1500:3,1750:3.5,2000:4,2250:4.5,2500:5,2750:5.5,3000:6}[tl]||0;return +(b*(d==420?1.15:1)).toFixed(3);}
 function storageWt(o,d){const t={"Storage Tray 120":d==420?0.188:0.146,"Storage Tray 240":d==420?0.281:0.217,
   "Divider":d==420?0.106:0.08,"Euro 20L":0.851,"Euro 40L":1.264,"(none)":0};return t[o]||0;}
 const TRAY_TYPES=["(none)","30mm Tray","100mm Tray","Drop Front Tray",TAPERED];
+
+/* ======================================================================
+   WORKBENCH ASSEMBLIES
+   A workbench takes a whole position: a position is either racking or a
+   workbench, never both. Other positions are unaffected, so a bench on
+   Offside Middle still leaves Offside Front and Rear free.
+   All three assemblies share one envelope. PLACEHOLDER figures below are
+   marked — no part numbers or weights were supplied.
+   ====================================================================== */
+const BENCH_L=1250, BENCH_H=930, BENCH_D=420;
+const BENCH_NONE="(none)";
+const BENCHES={
+  "3 Drawer Unit with Trays":[
+    {desc:"Drawer unit 140 x 460", qty:2, h:140, l:460},
+    {desc:"Drawer unit 210 x 460", qty:1, h:210, l:460},
+    {desc:"Tray 100 x 710",        qty:2, h:100, l:710}
+  ],
+  "6 Drawer Workbench":[
+    {desc:"Drawer unit 140 x 460", qty:3, h:140, l:460},
+    {desc:"Drawer unit 140 x 710", qty:3, h:140, l:710}
+  ],
+  "All Trays":[
+    {desc:"Tray 100 x 710", qty:2, h:100, l:710},
+    {desc:"Tray 100 x 460", qty:2, h:100, l:460}
+  ]
+};
+const BENCH_TYPES=[BENCH_NONE].concat(Object.keys(BENCHES));
+/* How each assembly reads in the parts list. Kept separate from the catalogue name
+   so the dropdown still matches the names on the workbench sheet, and so "Workbench"
+   isn't repeated ("Workbench - 6 Drawer", not "Workbench - 6 Drawer Workbench"). */
+const BENCH_LABEL={
+  "3 Drawer Unit with Trays":"Workbench - 3 Drawer Unit with Trays",
+  "6 Drawer Workbench":"Workbench - 6 Drawer",
+  "All Trays":"Workbench - All Trays"
+};
+function benchLabel(b){ return BENCH_LABEL[b] || ("Workbench - "+b); }
+/* Assembly part numbers not supplied yet — workbench lines show TBC until they are. */
+/* PLACEHOLDER weights — none supplied. Frame estimated from a 1250x420 rack
+   carcass; components are rough. Replace when known. */
+const BENCH_WT={ frame:18.0, "Drawer unit 140 x 460":4.2, "Drawer unit 210 x 460":5.4,
+                 "Drawer unit 140 x 710":5.8, "Tray 100 x 710":2.4, "Tray 100 x 460":1.7 };
+function isBench(c){ return !!c && !!c.bench && c.bench!==BENCH_NONE; }
+/* Every workbench has a kick strip. At 1250 external the internal length is 1210,
+   the same RC001-009 part a 1250 rack uses. */
+const BENCH_KICK_QTY=1;
+function benchKickPart(){ return "RC001-009-"+KICK_SUFFIX[INT_LEN[BENCH_L]]+"A"; }
+function benchWt(c){
+  if(!isBench(c)) return 0;
+  let t=BENCH_WT.frame||0;
+  (BENCHES[c.bench]||[]).forEach(x=>{ t+=(BENCH_WT[x.desc]||0)*x.qty; });
+  const k=PART_DB[benchKickPart()];
+  if(k) t+=k.wt*BENCH_KICK_QTY;          // real figure, the kick strip is a known part
+  return +t.toFixed(3);
+}
+/* ======================================================================
+   DRAWER UNITS
+   Drawer units are 420 deep only and come in two lengths (460 / 710) and
+   two heights (140 / 210). They are always fitted as a "drawer band": a
+   stack of units with a 35mm support tray directly underneath, and a tray
+   of any height directly above.
+
+   A rack longer than 710 internal cannot be filled by one drawer unit, so
+   the band is split into two bays. The divider between the bays is a pair
+   of infill panels fitted back to back, 20mm each — the 40mm that makes
+   460+40+460=960, 460+40+710=1210 and 710+40+710=1460 come out exact.
+   The infill is only as tall as the drawer stack, so the rack stays one
+   full-length column above and below the band.
+
+   A 500 or 750 rack is a single bay: the drawers fill it and no infill is
+   needed. (The other divider type — an end panel running to the floor —
+   is a real build but is deliberately not offered here yet; it splits the
+   rack below the band too, which the tray model doesn't carry.)
+   ====================================================================== */
+const DRAWER_D=420;                 // drawer units are only made 420 deep
+const SUPPORT_TRAY_H=35;            // support tray sits directly under the last drawer
+const INFILL_T=20;                  // one infill panel; two back to back = 40mm
+const DRAWER_NONE="(none)";
+
+/* The widths a bay can be — the two lengths a drawer unit is made in. */
+const DRAWER_W=[460,710];
+/* The multiset of bay widths a rack length has to be made up of. Order is NOT
+   fixed: a 1250 can be 460|710 or 710|460, so which side the long drawers go is
+   the user's choice. */
+const BAY_SET={500:[460], 750:[710], 1000:[460,460], 1250:[460,710], 1500:[710,710]};
+function baySet(len){ return (BAY_SET[+len]||[460,460]).slice(); }
+function isSplit(len){ return baySet(len).length>1; }
+
+/* The seven stacks, in the order they are offered. Both 3x140 and 2x210 come to
+   420, so a stack is identified by its option name, never by its height. */
+const STACK_DEFS=[
+  {h:280, units:[{h:140,q:2}]},
+  {h:420, units:[{h:140,q:3}]},
+  {h:350, units:[{h:140,q:1},{h:210,q:1}]},
+  {h:490, units:[{h:140,q:2},{h:210,q:1}]},
+  {h:560, units:[{h:140,q:1},{h:210,q:2}]},
+  {h:420, units:[{h:210,q:2}]},
+  {h:630, units:[{h:210,q:3}]}
+];
+/* An option reads as the parts it orders - "140x460 x2", "140x710 x1 - 210x710 x1" -
+   so the width is chosen in the same click as the stack and the dropdown says
+   exactly what is going in the bay. */
+function stackLabel(def,w){ return def.units.map(u=>u.h+"x"+w+" x"+u.q).join(" - "); }
+const STACK_OPTIONS=[];
+DRAWER_W.forEach(w=>STACK_DEFS.forEach(d=>
+  STACK_OPTIONS.push({name:stackLabel(d,w), width:w, h:d.h, units:d.units})));
+function stackOpt(n){ return STACK_OPTIONS.find(o=>o.name===n)||null; }
+function stackHeight(n){ const o=stackOpt(n); return o?o.h:0; }
+
+/* Which widths this bay may still take: the rack's set, less whatever the other
+   bay has already claimed. On a 1250 picking 710 on the left leaves only 460 for
+   the right, so an impossible pair can't be selected in the first place. */
+function allowedWidths(c,idx){
+  const set=baySet(c.length);
+  if(set.length===1) return set;
+  const other=stackOpt(idx===0?c.drawers.b:c.drawers.a);
+  if(other){ const i=set.indexOf(other.width); if(i>=0) set.splice(i,1); }
+  return [...new Set(set)];
+}
+/* A bay's width is whatever its stack says. With no stack picked it is only known
+   when one width is left to it — on an empty 1250 either is still open. */
+function bayWidth(c,idx){
+  const o=stackOpt(idx===0?c.drawers.a:c.drawers.b);
+  if(o) return o.width;
+  const aw=allowedWidths(c,idx);
+  return aw.length===1?aw[0]:null;
+}
+/* The stacks a bay may be set to: every stack in every width the rack actually
+   uses. A 1000 is 460|460 so only the 460 stacks appear, a 1500 only the 710s,
+   and a 1250 keeps the whole list in both bays — either side can be the long one.
+   Nothing is hidden to prevent a bad pair; picking one bay corrects the other
+   instead (see the change handler), so the band height stays editable from
+   either side without having to clear a bay first. */
+function allowedStacks(c){
+  const wOK=[...new Set(baySet(c.length))];
+  return STACK_OPTIONS.filter(o=>wOK.indexOf(o.width)>=0);
+}
+/* The same stack at a given bay width — used to keep the two bays in step. On a
+   1250 that means the same drawer heights in the alternative length. */
+function unitSig(o){ return o.units.map(u=>u.h+"x"+u.q).join("|"); }
+function mirrorStack(opt,width){
+  if(!opt) return null;
+  if(opt.width===width) return opt;
+  const sig=unitSig(opt);
+  return STACK_OPTIONS.find(o=>o.width===width && unitSig(o)===sig)||null;
+}
+/* The width the other bay has to be once this one is settled: whatever is left
+   of the rack's pair. 1250 -> the alternative length; 1000/1500 -> the same. */
+function partnerWidth(c,width){
+  const set=baySet(c.length);
+  const i=set.indexOf(width);
+  if(i>=0) set.splice(i,1);
+  return set.length?set[0]:null;
+}
+
+/* Drawer unit part numbers, keyed unitHeight|bayWidth. */
+const DRAWER_PART={
+  "140|460":"RC003-002", "210|460":"RC003-003",
+  "140|710":"RC003-004", "210|710":"RC003-005"
+};
+/* Infill panel by stack height. 420 is shared by both 420 stacks. */
+const INFILL_SUFFIX={280:"01",350:"02",420:"03",490:"04",560:"05",630:"06"};
+function infillPart(stackName){
+  const sfx=INFILL_SUFFIX[stackHeight(stackName)];
+  return sfx?("RC003-001-"+sfx+"A"):"";
+}
+/* Support tray by length. Same suffix scheme as the tray families. */
+const SUPPORT_SUFFIX={460:"01",710:"02",960:"03",1210:"04",1460:"05"};
+function supportTrayPart(len){
+  const sfx=SUPPORT_SUFFIX[len];
+  return sfx?("RC004-002-"+sfx+"A"):"";
+}
+
+/* A tray part at an exact length, rather than at the rack's internal length -
+   used by the bay opposite a drawer stack, which is only as long as that bay. */
+function trayPartByLen(type,len,depth){
+  const fam=trayFamily(type,depth); if(!fam) return "";
+  const sfx=(type==="Drop Front Tray")?DF_SUFFIX[len]:TRAY_SUFFIX[len];
+  return sfx?(fam+"-"+sfx+"A"):"";
+}
+/* Which bay, if any, is the empty side of a one-sided drawer band. Only then is
+   there a bay-width space for a tray to fill. */
+function openBayIdx(c){
+  if(!c||!isSplit(c.length)||!hasDrawers(c)) return -1;
+  const bays=drawerBays(c);
+  const empty=bays.filter(b=>b.stack===DRAWER_NONE);
+  return empty.length===1?empty[0].idx:-1;
+}
+/* How many trays fit in the bay beside the drawers. A taller stack leaves a taller
+   opening, so it takes more of them - three is the most that is ever built. */
+const BAY_TRAY_MAX={280:1,350:1,420:2,490:2,560:3,630:3};
+function bayTrayMax(c){
+  const s=drawerStacks(c)[0];
+  return s?(BAY_TRAY_MAX[stackHeight(s.stack)]||1):1;
+}
+function bayTraySlot(c,idx){
+  if(!c) return {type:"(none)",qty:1};
+  if(!c.bayTray) c.bayTray={a:{type:"(none)",qty:1},b:{type:"(none)",qty:1}};
+  const k=idx===0?"a":"b";
+  if(typeof c.bayTray[k]==="string") c.bayTray[k]={type:c.bayTray[k],qty:1};
+  if(!c.bayTray[k]) c.bayTray[k]={type:"(none)",qty:1};
+  return c.bayTray[k];
+}
+function bayTrayOf(c,idx){ return bayTraySlot(c,idx).type; }
+/* The bay tray only exists while that bay is the open side of a drawer band. */
+function activeBayTray(c){
+  const i=openBayIdx(c);
+  if(i<0) return null;
+  const sl=bayTraySlot(c,i);
+  if(sl.type==="(none)") return null;
+  const b=drawerBays(c)[i];
+  const qty=Math.min(Math.max(1,+sl.qty||1), bayTrayMax(c));
+  return {idx:i,type:sl.type,width:b.width,qty};
+}
+function drawerBays(c){
+  if(!c||!c.drawers) return [];
+  const n=baySet(c.length).length;
+  return Array.from({length:n},(_,i)=>({
+    idx:i,
+    width:bayWidth(c,i),
+    stack:(i===0?c.drawers.a:c.drawers.b)||DRAWER_NONE
+  }));
+}
+function hasDrawers(c){ return drawerBays(c).some(b=>b.stack!==DRAWER_NONE); }
+/* The drawer band is one flat band: stack + the support tray under it. With two
+   bays of drawers the stacks must match, otherwise the band is at two different
+   heights and a single full-length support tray can't sit under both. */
+function drawerStacks(c){ return drawerBays(c).filter(b=>b.stack!==DRAWER_NONE); }
+function bandHeight(c){
+  const s=drawerStacks(c);
+  if(!s.length) return 0;
+  return Math.max.apply(null,s.map(b=>stackHeight(b.stack)))+SUPPORT_TRAY_H;
+}
+function drawerMismatch(c){
+  const s=drawerStacks(c);
+  return s.length===2 && stackHeight(s[0].stack)!==stackHeight(s[1].stack);
+}
+/* Drawers are 420 deep, so a 320 rack can't take them. */
+function drawersAllowed(c){ return +c.depth===DRAWER_D; }
+
+/* ---- How many trays are left once a drawer band is in the rack ----
+   A drawer band eats a fixed slice of the rack, so a tall stack in a short rack
+   leaves room for fewer trays. A tray needs working clearance above it to be
+   usable, not just its own height.
+
+   PLACEHOLDER — TRAY_CLEARANCE is read off Drawing 1 (a 1220 rack with a 280
+   stack came out at roughly 185-220 mm of clear space over each tray). Replace
+   it with the real tray pitch when it's confirmed.
+
+   This only ever applies when a drawer band is fitted, so every rack without
+   drawers behaves exactly as it did before. The top tray is measured by its own
+   height alone — the clearance above it is the open top of the rack. */
+const TRAY_CLEARANCE=200;
+function trayOwnHeight(t){ return t==="30mm Tray"?30:100; }
+function trayPitch(t){ return trayOwnHeight(t)+TRAY_CLEARANCE; }
+/* Slot 1 is never withheld: there is always a tray directly above the drawers
+   (unless a trough takes that place), so it stays selectable whatever the stack. */
+function trayRoom(c){
+  if(!c||!hasDrawers(c)) return {max:(c&&c.trays?c.trays.length:4), left:null, limited:false};
+  let left=+c.height-bandHeight(c);
+  let max=0;
+  for(let i=0;i<c.trays.length;i++){
+    const t=c.trays[i].type;
+    if(i===0){ max=1; left-=trayOwnHeight(t==="(none)"?"100mm Tray":t); continue; }
+    const cost=trayPitch(t==="(none)"?"30mm Tray":t);   // cheapest tray if nothing picked yet
+    if(left>=cost){ left-=cost; max++; } else break;
+  }
+  return {max, left:Math.max(0,left), limited:max<c.trays.length};
+}
+/* Drawer units have real weights. Infill panels and support trays don't yet, so
+   they contribute nothing and the form says which parts are still missing — a
+   made-up figure is worse than a stated gap on a number someone loads a van by.
+   Each weight is read from PART_DB, so filling in the blanks there is all it takes
+   for them to start counting. */
+function partWt(p){ const d=PART_DB[p]; return (d&&d.wt!=null)?d.wt:0; }
+function drawerWt(c){
+  if(!hasDrawers(c)) return 0;
+  let t=0;
+  drawerStacks(c).forEach(b=>{
+    const s=stackOpt(b.stack); if(!s) return;
+    s.units.forEach(u=>{ t+=partWt(DRAWER_PART[u.h+"|"+s.width])*u.q; });
+  });
+  if(isSplit(c.length)) t+=partWt(infillPart(drawerStacks(c)[0].stack))*2;
+  t+=partWt(supportTrayPart(INT_LEN[c.length]||960));
+  return +t.toFixed(3);
+}
+/* Which drawer-band parts in this rack still have no weight. */
+function drawerMissingWt(c){
+  if(!hasDrawers(c)) return [];
+  const miss=[], none=p=>{ const d=PART_DB[p]; return !d||d.wt==null; };
+  if(drawerStacks(c).some(b=>{
+      const s=stackOpt(b.stack);
+      return s && s.units.some(u=>none(DRAWER_PART[u.h+"|"+s.width]));
+    })) miss.push("drawer units");
+  if(isSplit(c.length) && none(infillPart(drawerStacks(c)[0].stack))) miss.push("infill panels");
+  if(none(supportTrayPart(INT_LEN[c.length]||960))) miss.push("support trays");
+  return miss;
+}
+/* Everything the whole van is still missing a weight for, deduplicated. */
+function vanMissingWt(){
+  const all=[];
+  POSITIONS.forEach((p,i)=>drawerMissingWt(state[i]).forEach(m=>{ if(all.indexOf(m)<0) all.push(m); }));
+  return all;
+}
+function listPhrase(a){
+  if(a.length<2) return a[0]||"";
+  return a.slice(0,-1).join(", ")+" and "+a[a.length-1];
+}
+
 const STORAGE=["(none)","Storage Tray 120","Storage Tray 240","Divider","Euro 20L","Euro 40L"];
 
 /* ====== PARTS DATABASE (from Parts Sheet — exact part #, stock #, weight) ====== */
@@ -926,6 +1455,28 @@ const PART_DB={
   "RC001-011-05A":{desc:"Trough",stock:"RAC21156", wt:14.856},
   "RC001-011-06A":{desc:"Trough",stock:"RACM21197",wt:16.306},
   "RC001-011-07A":{desc:"Trough",stock:"RACM21157",wt:17.757},
+  // Fixed trough, 2990 x 200 deep x 120 high — stock number and weight not supplied yet
+  "R286-PA-006-01":{desc:"Trough 2990 x 120 x 200",stock:"TBC",wt:null},
+  /* Drawer units — 420 deep only. */
+  "RC003-002":{desc:"140x460 Drawer Unit",stock:"VC62486301",wt:4.9},
+  "RC003-003":{desc:"210x460 Drawer Unit",stock:"VC62486302",wt:6.5},
+  "RC003-004":{desc:"140x710 Drawer Unit",stock:"VC62486312",wt:6.8},
+  "RC003-005":{desc:"210x710 Drawer Unit",stock:"VC62486313",wt:8.7},
+  /* Infill panels — the divider between two drawer bays, 2 off fitted back to
+     back. Height matches the drawer stack. Stock numbers and weights not supplied. */
+  "RC003-001-01A":{desc:"280x420 Infill Panel",stock:"TBC",wt:null},
+  "RC003-001-02A":{desc:"350x420 Infill Panel",stock:"TBC",wt:null},
+  "RC003-001-03A":{desc:"420x420 Infill Panel",stock:"TBC",wt:null},
+  "RC003-001-04A":{desc:"490x420 Infill Panel",stock:"TBC",wt:null},
+  "RC003-001-05A":{desc:"560x420 Infill Panel",stock:"TBC",wt:null},
+  "RC003-001-06A":{desc:"630x420 Infill Panel",stock:"TBC",wt:null},
+  /* Support trays — 35mm, one directly under the last drawer unit, full rack
+     internal length. Stock numbers and weights not supplied. */
+  "RC004-002-01A":{desc:"Support Tray",stock:"TBC",wt:null},
+  "RC004-002-02A":{desc:"Support Tray",stock:"TBC",wt:null},
+  "RC004-002-03A":{desc:"Support Tray",stock:"TBC",wt:null},
+  "RC004-002-04A":{desc:"Support Tray",stock:"TBC",wt:null},
+  "RC004-002-05A":{desc:"Support Tray",stock:"TBC",wt:null},
 };
 // Storage items have no RC part number — keyed by name+depth
 const STORAGE_DB={
@@ -942,16 +1493,28 @@ const STORAGE_DB={
 };
 
 /* Tapered tray part numbers. The suffixes don't follow the length/depth pattern
-   used by the other tray families, so they're mapped explicitly.
-   key = internalLength|depth */
+   used by the other tray families, so they're mapped explicitly. key = internalLength|depth */
 const TAPERED_PART={
   "960|320":"REP074-003-03A",
   "960|420":"REP074-003-04A",
   "1210|420":"REP074-003-05A",
   "1210|320":"REP074-003-06A"
 };
-const TAPERED_LENGTHS=[1000,1250];          // rack lengths that have a tapered tray
+const TAPERED_LENGTHS=[1000,1250];
 function taperedAvailable(rackLength){return TAPERED_LENGTHS.indexOf(+rackLength)>=0;}
+/* Not every tray is made at every length. The drop front starts at 710 internal
+   (RC001-007/008 have no 460 part), so it cannot go in a 500 rack. Without this
+   the tray was selectable, counted toward the weight, and then dropped out of the
+   parts list with no part number to print - a tray on the quote that nothing builds. */
+function trayAvailable(type,rackLength){
+  if(type===TAPERED) return taperedAvailable(rackLength);
+  if(type==="Drop Front Tray") return !!DF_SUFFIX[INT_LEN[+rackLength]];
+  return true;
+}
+function trayUnavailableNote(type){
+  return type==="Drop Front Tray" ? "  \u2014 not made at this length"
+                                  : "  \u2014 not at this length";
+}
 
 // Tray family stem by type + depth
 function trayFamily(type,depth){
@@ -981,6 +1544,15 @@ function buildPartsList(){
   POSITIONS.forEach((p,i)=>{
     const c=state[i], res=calc(c);
     if(res.empty) return;
+    if(isBench(c)){
+      /* A workbench is one line, named by the assembly — its drawer units and trays
+         are part of it rather than separately picked. The kick strip stays on its
+         own line because it is a real stocked part number. */
+      add("TBC", benchLabel(c.bench), "TBC", BENCH_L, BENCH_H, BENCH_D, 1);
+      const bk=benchKickPart(), bkd=PART_DB[bk];
+      if(bkd) add(bk,bkd.desc,bkd.stock,INT_LEN[BENCH_L],72,BENCH_D,BENCH_KICK_QTY);
+      return;
+    }
     const tLen=INT_LEN[c.length]||960;
     // End panels — 2 per rack
     const epFam=(c.depth==320)?"RC001-001":"RC001-002";
@@ -1002,6 +1574,36 @@ function buildPartsList(){
         if(sd) add(sd.part,sd.desc,sd.stock,"",storH,c.depth,t.qty);
       }
     });
+    /* Drawer band — the units in each bay, the pair of infill panels that divide
+       them when the rack is split, and the one support tray under the band. */
+    if(hasDrawers(c)){
+      const bays=drawerStacks(c);
+      bays.forEach(b=>{
+        const s=stackOpt(b.stack);
+        if(!s) return;
+        s.units.forEach(u=>{
+          const part=DRAWER_PART[u.h+"|"+s.width];
+          const pd=PART_DB[part];
+          if(pd) add(part,pd.desc,pd.stock,s.width,u.h,DRAWER_D,u.q);
+        });
+      });
+      if(isSplit(c.length)){
+        const ipart=infillPart(bays[0].stack);
+        const ip=PART_DB[ipart];
+        /* Length is left blank for panels, the same as the end panel rows — a
+           20mm thickness in a LENGTH column reads as a part 20mm long. */
+        if(ip) add(ipart,ip.desc,ip.stock,"",stackHeight(bays[0].stack),DRAWER_D,2);
+      }
+      const spart=supportTrayPart(tLen);
+      const sp=PART_DB[spart];
+      if(sp) add(spart,sp.desc,sp.stock,tLen,SUPPORT_TRAY_H,DRAWER_D,1);
+      /* a tray filling the bay opposite the drawers, at that bay's length */
+      const abt=activeBayTray(c);
+      if(abt){
+        const bp=trayPartByLen(abt.type,abt.width,+c.depth), bd=PART_DB[bp];
+        if(bd) add(bp,bd.desc,bd.stock,abt.width,(abt.type==="30mm Tray"?30:100),c.depth,abt.qty);
+      }
+    }
     // Kick strip
     if(kickN(c)>0){
       const ksPart="RC001-009-"+KICK_SUFFIX[tLen]+"A";
@@ -1010,10 +1612,13 @@ function buildPartsList(){
     }
     // Trough
     if(c.trough==="Yes"){
-      const trFam=(c.depth==320)?"RC001-010":"RC001-011";
-      const trPart=trFam+"-"+TROUGH_SUFFIX[+c.troughLen]+"A";
+      const trPart=troughIsR286(c)
+        ? TROUGH_R286_PART
+        : ((c.depth==320?"RC001-010":"RC001-011")+"-"+TROUGH_SUFFIX[+c.troughLen]+"A");
       const tr=PART_DB[trPart];
-      if(tr) add(trPart,tr.desc,tr.stock,+c.troughLen,100,c.depth,1);
+      if(tr) add(trPart,tr.desc,tr.stock,+c.troughLen,
+                 troughIsR286(c)?TROUGH_R286_H:100,
+                 troughIsR286(c)?TROUGH_R286_D:c.depth,1);
     }
   });
   // Sort by part number (blank-part storage items last)
@@ -1089,6 +1694,7 @@ const VANS={
   },
   "Renault / Nissan":{
     "Renault Trafic":["L1 H1","L2 H1","L2 H2"],
+    "Renault Master":["L2 H2","L3 H2","L3 H3"],
     "Nissan Primastar":["L1 H1","L2 H1"]
   }
 };
@@ -1151,101 +1757,180 @@ const VAN_DATA={
   "Renault / Nissan|Renault Trafic|L1 H1":{loadLength:2537, loadHeight:1387, loadWidth:1662, archWidth:1268, wheelBoxH:null, wheelBoxW:null, img:""},
   "Renault / Nissan|Renault Trafic|L2 H1":{loadLength:2937, loadHeight:1387, loadWidth:1662, archWidth:1268, wheelBoxH:null, wheelBoxW:null, img:""},
   "Renault / Nissan|Renault Trafic|L2 H2":{loadLength:2937, loadHeight:1898, loadWidth:1662, archWidth:1268, wheelBoxH:null, wheelBoxW:null, img:""},
+  // ---- Renault Master (2024-on, current generation). Renault UK lists these three
+  //      sizes only. Load width 1765 is derived from the quoted load volumes: Parkers
+  //      prints 1537, which would put L2 H2 at 9.3m3 against Renault's ~10.8m3.
+  "Renault / Nissan|Renault Master|L2 H2":{loadLength:3225, loadHeight:1885, loadWidth:1765, archWidth:1380, wheelBoxH:null, wheelBoxW:null, img:""},
+  "Renault / Nissan|Renault Master|L3 H2":{loadLength:3855, loadHeight:1885, loadWidth:1765, archWidth:1380, wheelBoxH:null, wheelBoxW:null, img:""},
+  "Renault / Nissan|Renault Master|L3 H3":{loadLength:3855, loadHeight:2138, loadWidth:1765, archWidth:1380, wheelBoxH:null, wheelBoxW:null, img:""},
   "Renault / Nissan|Nissan Primastar|L1 H1":{loadLength:2537, loadHeight:1387, loadWidth:1662, archWidth:1268, wheelBoxH:null, wheelBoxW:null, img:""},
   "Renault / Nissan|Nissan Primastar|L2 H1":{loadLength:2937, loadHeight:1387, loadWidth:1662, archWidth:1268, wheelBoxH:null, wheelBoxW:null, img:""},
 };
 /* default limits used when a van has no VAN_DATA entry yet (generous, so nothing is blocked) */
 const VAN_DATA_DEFAULT={loadLength:9999, loadHeight:9999, loadWidth:9999, archWidth:9999, wheelBoxH:null, wheelBoxW:null, img:""};
 function vanData(){
+  if(!vanChosen()) return null;
   return VAN_DATA[`${van.make}|${van.model}|${van.size}`] || VAN_DATA_DEFAULT;
 }
 
 /* ====== STATE: one config object per position ====== */
-function blankConfig(){return{height:1220,length:1000,depth:420,kick:"No",kickQty:1,trough:"No",troughLen:2000,lengthSet:false,
+function blankConfig(){return{bench:BENCH_NONE,
+  height:"",length:"",depth:"",kick:"No",kickQty:1,trough:"No",troughLen:2000,lengthSet:false,
   trays:[{type:"(none)",storage:"(none)",qty:0},{type:"(none)",storage:"(none)",qty:0},
-         {type:"(none)",storage:"(none)",qty:0},{type:"(none)",storage:"(none)",qty:0}],notes:""};}
+         {type:"(none)",storage:"(none)",qty:0},{type:"(none)",storage:"(none)",qty:0}],
+  drawers:{a:DRAWER_NONE,b:DRAWER_NONE},bayTray:{a:{type:"(none)",qty:1},b:{type:"(none)",qty:1}},bandSlot:3,notes:""};}
 /* all positions start empty - nothing pre-selected */
 const state=POSITIONS.map(()=>blankConfig());
 let active=0;
 /* job-level details (customer + quote, MVCS prefix is fixed in the UI) */
 const job={customer:"",spec:"",quote:"",rev:""};
 /* van selection is shared across all positions (one van, five racks) */
-const van={make:"Ford",model:"Transit Custom",size:"L2 H1"};
+const van={make:"",model:"",size:""};
+function vanChosen(){ return !!(van.make&&van.model&&van.size); }
 
 /* ====== VAN CASCADING DROPDOWNS ====== */
 function fillSelect(sel,opts,current){
   sel.innerHTML=opts.map(o=>`<option ${o===current?"selected":""}>${o}</option>`).join("");
 }
+/* Nothing is pre-selected, so each level stays blank until the one above it is
+   chosen and never silently falls back to the first entry in the list. */
+const VAN_PICK="Select\u2026";
+function fillPick(sel,opts,current,enabled){
+  if(!sel) return;
+  sel.disabled=!enabled;
+  sel.innerHTML='<option value="" '+(current?"":"selected")+'>'+VAN_PICK+'</option>'+
+    opts.map(o=>'<option '+(o===current?"selected":"")+'>'+o+'</option>').join("");
+}
 function initVanDropdowns(){
   const makes=Object.keys(VANS);
-  if(!makes.includes(van.make))van.make=makes[0];
-  fillSelect($("vanMake"),makes,van.make);
+  if(van.make && !makes.includes(van.make)) van.make="";
+  fillPick($("vanMake"),makes,van.make,true);
   syncModels();
 }
 function syncModels(){
-  const models=Object.keys(VANS[van.make]);
-  if(!models.includes(van.model))van.model=models[0];
-  fillSelect($("vanModel"),models,van.model);
+  const models=van.make?Object.keys(VANS[van.make]):[];
+  if(van.model && !models.includes(van.model)) van.model="";
+  fillPick($("vanModel"),models,van.model,!!van.make);
   syncSizes();
 }
 function syncSizes(){
-  const sizes=VANS[van.make][van.model];
-  if(!sizes.includes(van.size))van.size=sizes[0];
-  fillSelect($("vanSize"),sizes,van.size);
+  const sizes=(van.make&&van.model)?VANS[van.make][van.model]:[];
+  if(van.size && !sizes.includes(van.size)) van.size="";
+  fillPick($("vanSize"),sizes,van.size,!!(van.make&&van.model));
 }
 
 /* ====== CALC ====== */
 function calc(c){
+  if(isBench(c)){
+    return{total:benchWt(c), fitted:0, code:"", trayWts:[0,0,0,0], empty:false,
+           shareable:false, unshareable:["workbench"], bench:c.bench};
+  }
   let fitted=0;
   const trayWts=c.trays.map(t=>{
     const w=trayWt(t.type,c.length,c.depth)+storageWt(t.storage,c.depth)*t.qty;
     if(t.type!=="(none)")fitted++;return w;});
-  const empty=fitted===0&&kickN(c)===0&&c.trough==="No";
+  const empty=!dimsSet(c)||(fitted===0&&kickN(c)===0&&c.trough==="No"&&!hasDrawers(c));
   // an unconfigured position has no rack, so no weight at all
   let total=0;
   if(!empty){
     total=2*endPanelWt(c.height,c.depth);
     total+=trayWts.reduce((a,b)=>a+b,0);
     total+=kickWt(c.length)*kickN(c);
+    total+=drawerWt(c);
+    const abt=activeBayTray(c);
+    if(abt){
+      const bd=PART_DB[trayPartByLen(abt.type,abt.width,+c.depth)];
+      if(bd&&bd.wt!=null) total+=bd.wt*abt.qty;
+    }
     if(c.trough==="Yes")total+=troughWt(c.troughLen,c.depth);
   }
-  const tc=c.trays.map(t=>TRAY_CODE[t.type]).join("-");
+  /* A tapered tray has no letter in the share code format, so rather than encode
+     it as something it isn't, the rack is marked unshareable and no code is issued. */
+  const unshareable=[];
+  if(c.trays.some(t=>t.type===TAPERED)) unshareable.push(TAPERED);
+  if(troughIsR286(c)) unshareable.push(TROUGH_R286_PART);
+  /* The code has one slot for the tray stack and no concept of bays, so a drawer
+     band can't be written into it. Same treatment as the tapered tray: no code
+     rather than a code that decodes to the wrong rack. */
+  if(hasDrawers(c)) unshareable.push("drawer units");
+  const shareable=unshareable.length===0;
+  const tc=c.trays.map(t=>TRAY_CODE[t.type]||"?").join("-");
   const code=[LEN_CODE[c.length],DEP_CODE[c.depth],HGT_CODE[c.height],fitted,tc,
     ["N","1","2"][kickN(c)],c.trough==="No"?"N":TROUGH_CODE[c.troughLen]].join("-");
-  return{total:+total.toFixed(3),fitted,code,trayWts,empty};
+  return{total:+total.toFixed(3),fitted,code,trayWts,empty,shareable,unshareable};
 }
 
 /* ====== RENDER FORM ====== */
 const $=id=>document.getElementById(id);
+/* A workbench takes the whole position, so with one selected the racking controls
+   are disabled rather than removed — the settings stay put and come back if the
+   workbench is set back to (none). */
+function applyBenchLock(){
+  const c=state[active], lock=isBench(c);
+  ["rackSection","traySection","drawerSection","compSection"].forEach(id=>{
+    const el=$(id); if(!el) return;
+    el.classList.toggle("locked",lock);
+    /* A control the form has already locked for its own reason (a tray slot the
+       drawer band leaves no room for) stays locked when the bench lock lifts. */
+    el.querySelectorAll("select,input,textarea").forEach(x=>{ x.disabled=lock||x.hasAttribute("data-locked"); });
+  });
+  const note=$("benchNote");
+  if(lock){
+    const items=(BENCHES[c.bench]||[]).map(x=>"<li>"+x.qty+"\u00d7 "+x.desc+"</li>").join("")+
+      "<li>"+BENCH_KICK_QTY+"\u00d7 Kick strip</li>";
+    note.innerHTML="<b>"+c.bench+"</b><span class=\"bdim\">"+BENCH_L+"L \u00d7 "+BENCH_H+"H \u00d7 "+BENCH_D+"D mm</span>"+
+      "<ul>"+items+"</ul>";
+    note.style.display="";
+  } else note.style.display="none";
+}
 function loadForm(){
   const c=state[active];
   $("formPos").textContent=POSITIONS[active];
+  $("benchType").innerHTML=BENCH_TYPES.map(b=>`<option ${b===c.bench?"selected":""}>${b}</option>`).join("");
   $("height").value=c.height;$("length").value=c.length;$("depth").value=c.depth;
   $("kick").value=c.kick;$("kickQty").value=c.kickQty||1;$("trough").value=c.trough;$("troughLen").value=c.troughLen;
   $("notes").value=c.notes;
   updateVanDisplay();
+  buildBayRows();     // before buildTrayRows: the band sets the tray height budget
   buildTrayRows();
+  applyBenchLock();
+  renderRackVis();
 }
 /* The tapered tray is only made at 960 / 1210 internal length. If the rack length
    moves off 1000 / 1250, any tapered tray fitted is taken back off rather than
    left pointing at a part number that doesn't exist. */
 function reconcileTrays(c){
-  if(taperedAvailable(c.length)) return 0;
-  let n=0;
-  c.trays.forEach(t=>{ if(t.type===TAPERED){ t.type="(none)"; t.storage="(none)"; t.qty=0; n++; } });
-  return n;
+  let n=0, kinds=[];
+  c.trays.forEach(t=>{
+    if(t.type==="(none)") return;
+    if(trayAvailable(t.type,c.length)) return;
+    if(kinds.indexOf(t.type)<0) kinds.push(t.type);
+    t.type="(none)"; t.storage="(none)"; t.qty=0; n++;
+  });
+  return {n, kinds};
 }
 function buildTrayRows(){
   const c=state[active];
-  const dropped=reconcileTrays(c);
+  const rec=reconcileTrays(c), dropped=rec.n;
+  /* A drawer band takes a slice of the rack, so the slots it leaves no room for
+     are cleared and locked rather than left selectable. */
+  const room=trayRoom(c);
+  let bumped=0;
+  for(let i=room.max;i<c.trays.length;i++){
+    if(c.trays[i].type!=="(none)"){ c.trays[i].type="(none)"; c.trays[i].storage="(none)"; c.trays[i].qty=0; bumped++; }
+  }
   const res=calc(c);
   const note=$("trayNote");
   if(note){
-    if(dropped>0){
-      note.textContent=TAPERED+" removed from "+dropped+" tray"+(dropped===1?"":"s")+
-        " \u2014 it's only made at 1000 and 1250 rack length.";
-      note.classList.add("show");
-    } else note.classList.remove("show");
+    const msgs=[];
+    if(dropped>0) msgs.push(rec.kinds.join(" / ")+" removed from "+dropped+" slot"+(dropped===1?"":"s")+
+      " \u2014 not made at "+c.length+" mm rack length.");
+    /* The standing "room for N trays" line moved onto the rows themselves as a
+       hover tip - it's only wanted while you're actually picking a tray. What
+       stays here is the things that happened: a tray taken back off. */
+    if(bumped>0) msgs.push(bumped+" tray"+(bumped===1?"":"s")+" removed \u2014 the drawer band doesn't leave the height.");
+    note.textContent=msgs.join("  ");
+    note.classList.toggle("show", msgs.length>0);
   }
   const grid=$("trayGrid");
   // remove any previously-injected row cells (keep header 5 + divider = first 6 children)
@@ -1255,29 +1940,37 @@ function buildTrayRows(){
     const off=t.type==="(none)";
     if(!off) trayRowNum++;
     const gr=i+2;
-    const mk=(html,col,extra="")=>{
+    const noRoom=i>=room.max;      // drawer band has used the height this slot needed
+    const mk=(html,col,extra="",tip="")=>{
       const d=document.createElement("div");
       d.style.gridColumn=col;d.style.gridRow=gr;
-      d.className="tg-cell"+(off?" tg-row-off":"")+(extra?(" "+extra):"");
+      d.className="tg-cell"+(off?" tg-row-off":"")+(noRoom?" tg-row-locked":"")+(extra?(" "+extra):"");
+      if(tip) d.setAttribute("data-tip",tip);
       d.innerHTML=html;return d;
     };
-    const tapOK=taperedAvailable(c.length);
-    grid.appendChild(mk(`<div class="control"><select data-i="${i}" data-k="type">
+
+    const tip=!hasDrawers(c) ? ""
+      : noRoom
+        ? "No room \u2014 the "+bandHeight(c)+" mm drawer band leaves height for "+room.max+
+          " tray"+(room.max===1?"":"s")+" in a "+c.height+" mm rack."
+        : "Drawer band "+bandHeight(c)+" mm. Room for "+room.max+" tray"+(room.max===1?"":"s")+
+          " in a "+c.height+" mm rack \u2014 "+room.left+" mm spare.";
+    grid.appendChild(mk(`<div class="control"><select data-i="${i}" data-k="type" ${noRoom?"disabled data-locked":""}>
       ${TRAY_TYPES.map(o=>{
-        const off=(o===TAPERED&&!tapOK);
-        return `<option ${o===t.type?"selected":""} ${off?"disabled":""}>${o}${off?"  \u2014 not at this length":""}</option>`;
-      }).join("")}</select></div>`,"1"));
+        const off=(o!=="(none)" && !trayAvailable(o,c.length));
+        return `<option ${o===t.type?"selected":""} ${off?"disabled":""}>${o}${off?trayUnavailableNote(o):""}</option>`;
+      }).join("")}</select></div>`,"1","",tip));
     const validStorage=storageOptsFor(t.type);
     // If current storage is not valid for this tray type, reset it
     if(!validStorage.includes(t.storage)){t.storage="(none)";t.qty=0;}
     const qMax=maxQtyFor(t.type, t.storage, +c.length, +c.depth);
     // Cap current qty to max
     if(t.qty>qMax) t.qty=qMax;
-    grid.appendChild(mk(`<div class="control"><select data-i="${i}" data-k="storage">
+    grid.appendChild(mk(`<div class="control"><select data-i="${i}" data-k="storage" ${noRoom?"disabled data-locked":""}>
       ${validStorage.map(o=>`<option ${o===t.storage?"selected":""}>${o}</option>`).join("")}</select></div>`,"3"));
-    grid.appendChild(mk(`<div class="control noarrow"><select data-i="${i}" data-k="qty" style="padding-right:9px">
+    grid.appendChild(mk(`<div class="control noarrow"><select data-i="${i}" data-k="qty" style="padding-right:9px" ${noRoom?"disabled data-locked":""}>
       ${Array.from({length:qMax+1},(_,n)=>`<option ${n===t.qty?"selected":""}>${n}</option>`).join("")}</select></div>`,"4"));
-    grid.appendChild(mk(`${res.trayWts[i].toFixed(3)} kg`,"5","tg-wt"));
+    grid.appendChild(mk(noRoom?"no room":`${res.trayWts[i].toFixed(3)} kg`,"5","tg-wt"));
   });
   grid.querySelectorAll("select").forEach(s=>s.addEventListener("change",e=>{
     const i=+e.target.dataset.i,k=e.target.dataset.k;
@@ -1300,12 +1993,377 @@ function buildTrayRows(){
     refresh();
   }));
 }
+/* A stack carries its own bay width, so a change of rack depth or length can leave
+   one selected that can't be built — a 710 stack in a 1000 rack, say. Rather than
+   carry it silently into a parts list, it is taken back off and reported. */
+function reconcileDrawers(c){
+  if(!c.drawers) c.drawers={a:DRAWER_NONE,b:DRAWER_NONE};
+  let n=0;
+  if(!drawersAllowed(c)){
+    if(c.drawers.a!==DRAWER_NONE){c.drawers.a=DRAWER_NONE;n++;}
+    if(c.drawers.b!==DRAWER_NONE){c.drawers.b=DRAWER_NONE;n++;}
+    return {dropped:n, reason:"depth"};
+  }
+  const set=baySet(c.length);
+  const single=set.length===1;
+  let reason=single?"length":"width";
+  if(single && c.drawers.b!==DRAWER_NONE){ c.drawers.b=DRAWER_NONE; n++; }
+  ["a","b"].forEach(k=>{
+    const o=stackOpt(c.drawers[k]);
+    if(!o) return;
+    const i=set.indexOf(o.width);
+    if(i<0){ c.drawers[k]=DRAWER_NONE; n++; reason="width"; } else set.splice(i,1);
+  });
+  return {dropped:n, reason};
+}
+function buildBayRows(){
+  const c=state[active];
+  const rec=reconcileDrawers(c);
+  const grid=$("bayGrid"), warn=$("drawerWarn");
+  const bays=drawerBays(c), split=isSplit(c.length), allowed=drawersAllowed(c);
+  grid.className="bay-grid"+(split?" split":"");
+  grid.innerHTML="";
+  if(!allowed){
+    grid.innerHTML='<div class="bay"><div class="bay-head"><span class="bay-name">Not available</span></div>'+
+      '<div class="bay-sub off">Drawer units are only made 420 deep. Set the rack depth to 420 to fit them.</div></div>';
+  } else {
+    bays.forEach((b,i)=>{
+      const key=i===0?"a":"b";
+      const label=split?(i===0?"Left Side Rack":"Right Side Rack"):"Full width";
+      const s=stackOpt(b.stack);
+      const d=document.createElement("div");
+      d.className="bay";
+      if(split){ d.style.gridColumn=(i===0?"1":"3"); d.style.gridRow="1"; }
+      const opts=allowedStacks(c);
+      const wOK=allowedWidths(c,i);
+      /* With drawers on one side only, the other bay is a bay-width space that a
+         tray can fill, so it gets its own tray picker at that length. */
+      const isOpen=(openBayIdx(c)===i);
+      const slot=bayTraySlot(c,i), bt=slot.type;
+      const qMax=bayTrayMax(c);
+      if(isOpen && +slot.qty>qMax) slot.qty=qMax;      // a shorter stack takes fewer
+      const qty=Math.min(Math.max(1,+slot.qty||1),qMax);
+      const sub=s
+        ? s.units.map(u=>u.q+"× "+u.h+"×"+s.width+" drawer unit").join("<br>")+
+          "<br>Stack "+s.h+" mm"
+        : isOpen
+          ? (bt==="(none)"
+              ? "No drawers — room for "+qMax+" tray"+(qMax===1?"":"s")+" at "+b.width+" mm."
+              : qty+"× "+bt+" at "+b.width+" mm")
+          : "No drawers in this bay"+(b.width?" — "+b.width+" mm of trays.":".");
+      let trayPick="";
+      if(isOpen){
+        const typeSel='<div class="control"><select data-baytray="'+key+'">'+
+          TRAY_TYPES.filter(t=>t!==TAPERED).map(t=>{
+            const off=(t!=="(none)" && !trayPartByLen(t,b.width,+c.depth));
+            return '<option '+(t===bt?"selected":"")+' '+(off?"disabled":"")+'>'+t+
+                   (off?"  \u2014 not made at "+b.width:"")+'</option>';
+          }).join("")+'</select>';
+        /* data-locked so the bench lock, which clears disabled on release,
+           leaves it alone - the quantity is only meaningful with a tray picked. */
+        const qtySel='<div class="control noarrow" style="flex:0 0 58px"><select data-baytrayqty="'+key+'" '+
+          (bt==="(none)"?"disabled data-locked":"")+' style="padding-right:9px">'+
+          Array.from({length:qMax},(_,n)=>'<option '+((n+1)===qty?"selected":"")+'>'+(n+1)+'</option>').join("")+
+          '</select></div>';
+        trayPick='<div class="inline2" style="margin-top:7px">'+typeSel+'</div>'+qtySel+'</div>';
+      }
+      d.innerHTML='<div class="bay-head"><span class="bay-name">'+label+'</span>'+
+        '<span class="bay-w">'+(b.width?b.width+" mm":wOK.join(" or ")+" mm")+'</span></div>'+
+        '<div class="control"><select data-bay="'+key+'">'+
+        ['<option '+(b.stack===DRAWER_NONE?"selected":"")+'>'+DRAWER_NONE+'</option>']
+          .concat(opts.map(o=>'<option '+(o.name===b.stack?"selected":"")+'>'+o.name+'</option>'))
+          .join("")+
+        '</select></div>'+trayPick+
+        '<div class="bay-sub'+(s||(isOpen&&bt!=="(none)")?"":" off")+'">'+sub+'</div>';
+      grid.appendChild(d);
+    });
+    if(split){
+      const dv=document.createElement("div");
+      dv.className="bay-div";
+      grid.appendChild(dv);
+    }
+  }
+  grid.querySelectorAll("select[data-baytray]").forEach(sel=>sel.addEventListener("change",e=>{
+    const cc=state[active], k=e.target.dataset.baytray;
+    bayTraySlot(cc,k==="a"?0:1).type=e.target.value;
+    refresh();
+  }));
+  grid.querySelectorAll("select[data-baytrayqty]").forEach(sel=>sel.addEventListener("change",e=>{
+    const cc=state[active], k=e.target.dataset.baytrayqty;
+    bayTraySlot(cc,k==="a"?0:1).qty=+e.target.value;
+    refresh();
+  }));
+  grid.querySelectorAll("select[data-bay]").forEach(sel=>sel.addEventListener("change",e=>{
+    const cc=state[active], k=e.target.dataset.bay, other=(k==="a")?"b":"a";
+    cc.drawers[k]=e.target.value;
+    const picked=stackOpt(e.target.value);
+    if(picked && isSplit(cc.length)){
+      /* Whatever this bay took, the other one has to make up the rest of the rack:
+         the alternative length on a 1250, the same length on a 1000 or 1500. */
+      const pw=partnerWidth(cc,picked.width);
+      const oo=stackOpt(cc.drawers[other]);
+      const mirror=mirrorStack(picked,pw);
+      if(!oo){
+        /* Empty, so fill it in. A 1000 is almost always built the same both sides,
+           and a 1250 pairs the same drawers in the other length. Set it back to
+           (none) if that side is meant to be trays. */
+        if(+cc.length===1000||+cc.length===1250) cc.drawers[other]=mirror?mirror.name:DRAWER_NONE;
+      } else if(oo.width!==pw || oo.h!==picked.h){
+        /* What's there can't stand with this pick — wrong length for the rack, or
+           a second band height when the band is one flat band. Move it to match.
+           A valid pairing at the same height is left alone, so a 420 band can be
+           3x140 one side and 2x210 the other. */
+        cc.drawers[other]=mirror?mirror.name:DRAWER_NONE;
+      }
+    }
+    refresh();
+  }));
+
+  /* Warnings, in priority order — the one that stops the rack being built wins. */
+  const msgs=[];
+  if(rec.dropped>0){
+    msgs.push(rec.reason==="depth"
+      ? "Drawer units removed — they are only made 420 deep."
+      : rec.reason==="width"
+        ? "Drawer units removed — that bay width doesn't fit a "+c.length+" rack."
+        : "Right bay cleared — a "+c.length+" rack is a single bay.");
+  }
+  /* Kept as a backstop. Selecting a mismatched pair isn't reachable any more —
+     a pick that changes the band height carries the other bay with it. */
+  if(drawerMismatch(c)){
+    msgs.push("Both bays must use the same stack height. The infill panel is one part and the "+
+      "support tray runs the full length, so the band can't sit at two heights.");
+  }
+  const bh=bandHeight(c);
+  if(bh>0 && bh>+c.height){
+    msgs.push("Drawer band is "+bh+" mm — taller than the "+c.height+" mm rack.");
+  }
+  warn.textContent=msgs.join("  ");
+  warn.classList.toggle("show", msgs.length>0);
+
+}
+/* ======================================================================
+   RACK LAYOUT SCHEMATIC
+   A front elevation of the position being configured. Every part is drawn at
+   its true size and in the right order; the spacing between parts is shared
+   out evenly and is indicative, not a build position - so this needs no hole
+   pitch or minimum gap figure to be correct about what it claims.
+
+   Tray slots read top to bottom, slot 1 at the top. The drawer band takes one
+   of those four slots, same as a tray.
+   ====================================================================== */
+/* Painted steel keeps its colour in both themes; the tokens only lift it enough
+   to stay readable against a dark card. */
+const RV={panel:"var(--rv-panel)",panelDk:"var(--rv-panel-dk)",
+          drawer:"var(--rv-drawer)",drawerDk:"var(--rv-drawer-dk)",
+          tray:"var(--rv-tray)",trayDk:"var(--rv-tray-dk)"};
+/* Clear height kept under the lowest tray so it never reads as sitting on the
+   floor - the rack has to clear the wheel box. Not dimensioned on the drawing. */
+const RV_FLOOR_CLEAR=250;
+/* Clear space between trays on a rack with no drawer units, so the spacing reads
+   the same whether two trays are fitted or four. */
+const RV_TRAY_GAP=200;
+/* The drawer band can't be the bottom slot, and can't be the top one unless a
+   trough covers it - a rack always needs something above the drawers. */
+function bandSlotAllowed(c,n){
+  if(n===4) return false;
+  if(n===1) return c.trough==="Yes";
+  return true;
+}
+function bandSlotFallback(c){
+  for(const n of [3,2,1]) if(bandSlotAllowed(c,n)) return n;
+  return 3;
+}
+function reconcileBandSlot(c){
+  const cur=+(c.bandSlot||3);
+  if(bandSlotAllowed(c,cur)) return false;
+  c.bandSlot=bandSlotFallback(c);
+  return true;
+}
+function buildBandSlotOptions(){
+  const sel=$("bandSlot"); if(!sel) return;
+  const c=state[active];
+  const label={1:"1 \u2014 top",2:"2",3:"3",4:"4 \u2014 bottom"};
+  const why={1:"  \u2014 needs a trough",4:"  \u2014 nothing could sit below"};
+  sel.innerHTML=[1,2,3,4].map(n=>{
+    const off=!bandSlotAllowed(c,n);
+    return '<option value="'+n+'" '+(n===+c.bandSlot?"selected":"")+' '+(off?"disabled":"")+'>'+
+           label[n]+(off?(why[n]||""):"")+'</option>';
+  }).join("");
+}
+function rvRect(x,y,w,h,fill,stroke,extra){
+  return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="'+fill+
+         '" stroke="'+stroke+'" stroke-width="3" '+(extra||"")+'/>';
+}
+/* A tray seen head on shows the return at the top of its front face. One line
+   reads as that fold and stops the fronts looking like flat bars. */
+function rvTray(x,y,w,h,extra){
+  let s=rvRect(x,y,w,h,RV.tray,RV.trayDk,extra);
+  if(h>=30){
+    const f=Math.min(9,h*0.3);
+    s+='<line x1="'+(x+2)+'" y1="'+(y+f)+'" x2="'+(x+w-2)+'" y2="'+(y+f)+
+       '" stroke="'+RV.trayDk+'" stroke-width="1.5" opacity="0.45"/>';
+  }
+  return s;
+}
+function rvTrayH(t){ return t==="30mm Tray"?30:100; }
+/* What is in the rack, top to bottom. The kick strip is part of the stack so the
+   bottom tray floats above it rather than sitting on it. */
+function rvItems(c){
+  const out=[], slot=+(c.bandSlot||3);
+  for(let i=0;i<c.trays.length;i++){
+    if(slot===i+1 && hasDrawers(c) && !drawerMismatch(c)){
+      const st=bandHeight(c)-SUPPORT_TRAY_H;
+      out.push({kind:"band",h:bandHeight(c),stack:st});
+    }
+    const t=c.trays[i].type;
+    if(t!=="(none)") out.push({kind:"tray",h:rvTrayH(t)});
+  }
+  return out;
+}
+function rvDrawBay(st,x,y,w){
+  if(!st) return rvRect(x,y,w,stackHeight(st)||0,"none","none");
+  let s="",yy=y;
+  st.units.forEach(u=>{
+    for(let i=0;i<u.q;i++){
+      s+=rvRect(x,yy,w,u.h,RV.drawer,RV.drawerDk);
+      s+='<line x1="'+(x+3)+'" y1="'+(yy+4)+'" x2="'+(x+w-3)+'" y2="'+(yy+4)+
+         '" stroke="#ffffff" stroke-width="2" opacity="0.14"/>';
+      s+='<ellipse cx="'+(x+w/2)+'" cy="'+(yy+u.h/2)+'" rx="'+Math.min(11,w/14)+
+         '" ry="'+(u.h*0.2)+'" fill="#11223a"/>';
+      yy+=u.h;
+    }
+  });
+  return s;
+}
+function renderRackVis(){
+  const out=$("rvOut"), dims=$("rvDims"), warn=$("rvWarn");
+  if(!out) return;
+  const c=state[active];
+  reconcileBandSlot(c);
+  buildBandSlotOptions();
+  if(isBench(c)){
+    dims.textContent=BENCH_L+"L \u00d7 "+BENCH_H+"H \u00d7 "+BENCH_D+"D";
+    out.innerHTML='<span class="rv-empty">'+benchLabel(c.bench)+' \u2014 no rack layout.</span>';
+    warn.classList.remove("show");
+    return;
+  }
+  dims.textContent=dimStr(c);
+  const list=rvItems(c);
+  if(!list.length && c.trough!=="Yes"){
+    out.innerHTML='<span class="rv-empty">Nothing configured yet.</span>';
+    warn.classList.remove("show");
+    return;
+  }
+  const W=+c.length, H=+c.height, inner=W-40, x0=20;
+  let s="", viewTop=0, viewH=H;
+  if(c.trough==="Yes"){
+    const th=troughHeight(c);
+    viewTop=-th-6; viewH=H+th+6;
+    s+=rvRect(0,-th-6,W,th,RV.tray,RV.trayDk,'opacity="0.9"');
+  }
+  /* every join gets an equal share except the one above the drawer band - the
+     tray there sits hard on the drawers */
+  const fixed=list.reduce((a,b)=>a+b.h,0);
+  const joins=[];
+  for(let j=0;j<list.length-1;j++){
+    if(list[j].kind==="tray" && list[j+1].kind==="band") continue;
+    joins.push(j);
+  }
+  /* Spare height is shared evenly between the parts, with the floor taking a share
+     too, so the lowest tray reads as clearing the wheel box rather than resting on
+     it. RV_FLOOR_CLEAR is a minimum, not a fixed reserve: when the even share
+     already beats it nothing is squeezed, and only when it falls short is the floor
+     gap pinned and the rest of the spacing recalculated. The kick strip stands on
+     the floor inside that clear strip and is drawn separately. */
+  let gap;
+  if(hasDrawers(c)){
+    /* With a drawer band the spare height is shared evenly, the floor taking a
+       share too, so the lowest tray clears the wheel box rather than resting on
+       it. RV_FLOOR_CLEAR is a minimum: only when the even share falls short is
+       the floor gap pinned and the rest of the spacing recalculated. */
+    const shares = joins.length + 1;
+    gap = Math.max(0,(H-fixed)/shares);     // even share == the floor clearance
+    if(gap < RV_FLOOR_CLEAR){
+      gap = joins.length ? Math.max(0,(H-fixed-RV_FLOOR_CLEAR)/joins.length) : 0;
+    }
+  } else {
+    /* Trays on their own hang off the top at a constant pitch, rather than being
+       spread to fill the rack - two trays should read the same as four, with the
+       leftover height falling at the bottom. The pitch only tightens if holding
+       it would push the lowest tray into the wheel box. */
+    gap = RV_TRAY_GAP;
+    if(joins.length){
+      const maxGap=(H-fixed-RV_FLOOR_CLEAR)/joins.length;
+      gap=Math.max(0,Math.min(gap,maxGap));
+    }
+  }
+  let y=0;
+  list.forEach((it,i)=>{
+    if(it.kind==="tray"){
+      s+=rvTray(x0,y,inner,it.h);
+    } else {
+      const bays=drawerBays(c), split=isSplit(c.length);
+      let bx=x0;
+      bays.forEach((b,bi)=>{
+        const st=stackOpt(b.stack), bw=b.width||(split?460:inner);
+        if(st) s+=rvDrawBay(st,bx,y,bw);
+        else {
+          const abt=activeBayTray(c);
+          if(abt && abt.idx===bi){
+            /* Spread evenly down the opening with equal space above, between and
+               below, so a single tray lands in the middle of the gap. */
+            const th=(abt.type==="30mm Tray")?30:100;
+            const free=Math.max(0,it.stack-abt.qty*th);
+            const g=free/(abt.qty+1);
+            for(let q=0;q<abt.qty;q++) s+=rvTray(bx,y+g+q*(th+g),bw,th);
+          } else {
+            s+=rvRect(bx,y,bw,it.stack,"var(--surface-2)",RV.panel,
+                      'stroke-dasharray="14 10" opacity="0.5"');
+          }
+        }
+        bx+=bw;
+        if(split && bi===0){
+          s+=rvRect(bx,y,INFILL_T,it.stack,RV.panel,RV.panelDk);
+          s+=rvRect(bx+INFILL_T,y,INFILL_T,it.stack,RV.panel,RV.panelDk);
+          bx+=INFILL_T*2;
+        }
+      });
+      s+=rvTray(x0,y+it.stack,inner,SUPPORT_TRAY_H);
+    }
+    y+=it.h+(joins.indexOf(i)>=0?gap:0);
+  });
+  if(kickN(c)>0){
+    if(kickN(c)>1) s+=rvRect(x0+12,H-72-12,inner,72,RV.tray,RV.trayDk,'opacity="0.3"');
+    s+=rvTray(x0,H-72,inner,72,'opacity="0.85"');
+  }
+  s+=rvRect(0,0,20,H,RV.panel,RV.panelDk);
+  s+=rvRect(W-20,0,20,H,RV.panel,RV.panelDk);
+
+  const pad=26;
+  out.innerHTML='<svg viewBox="'+(-pad)+' '+(viewTop-pad)+' '+(W+pad*2)+' '+(viewH+pad*2)+'" '+
+    'preserveAspectRatio="xMidYMid meet" shape-rendering="geometricPrecision" '+
+    'style="width:100%;height:100%" role="img" aria-label="Rack layout for '+POSITIONS[active]+'">'+s+'</svg>';
+
+  warn.textContent="";
+  warn.classList.remove("show");
+}
 function refresh(){
   const c=state[active],res=calc(c);
-  $("codeReadout").textContent=res.empty?"—":res.code;
+  const cr=$("codeReadout");
+  cr.textContent = res.empty ? "\u2014"
+    : (res.shareable ? res.code : (isBench(c) ? "WORKBENCH \u2014 NO CODE" : "NO SHARE CODE"));
+  cr.classList.toggle("unshareable", !res.empty && !res.shareable);
+  cr.title = (!res.empty && !res.shareable)
+    ? (isBench(c) ? "The share code format describes racking only, so a workbench position has no code."
+                  : "The share code format has no letter for "+res.unshareable.join(" or ")+
+                    ", so this rack can't be shared as a code.")
+    : "";
+  buildBayRows();       // before buildTrayRows: the band sets the tray height budget
   buildTrayRows();
-  checkLimits();
-  renderTabs();renderVan();renderMainPage();
+  applyBenchLock();     // after both, which recreate the selects
+  updateVanDisplay();   // redraws the vehicle panel, and calls checkLimits itself
+  renderTabs();renderVan();renderMainPage();renderRackVis();
 }
 
 /* ====== TABS ====== */
@@ -1348,18 +2406,22 @@ function renderMainPage(){
     const c=state[i],res=calc(c);total+=res.total;
     const row=document.createElement("div");
     row.className="mp-srow";
-    const trays=res.empty?'<span class="mp-muted">—</span>':`${res.fitted}`;
+    const bench=isBench(c);
+    const trays=(res.empty||bench)?'<span class="mp-muted">—</span>':`${res.fitted}`;
     // Storage: list tray storage types (deduplicated, excluding "(none)")
     const storageSet=[...new Set(c.trays.filter(t=>t.type!=="(none)"&&t.storage!=="(none)").map(t=>t.storage))];
     const storageStr=res.empty?'<span class="mp-muted">—</span>':(storageSet.length?storageSet.join(", "):'<span class="mp-muted">—</span>');
-    const opts=[];if(kickN(c)>0)opts.push(kickN(c)+"x Kick");if(c.trough==="Yes")opts.push("Trough "+c.troughLen);
-    const optStr=res.empty?'<span class="mp-muted">—</span>':(opts.length?opts.join(", "):'<span class="mp-muted">none</span>');
+    const opts=[];
+    if(hasDrawers(c))opts.push("Drawers: "+drawerStacks(c).map(b=>b.stack).join(" | "));
+    if(kickN(c)>0)opts.push(kickN(c)+"x Kick");if(c.trough==="Yes")opts.push("Trough "+c.troughLen);
+    const optStr=res.empty?'<span class="mp-muted">—</span>'
+      :(bench?c.bench:(opts.length?opts.join(", "):'<span class="mp-muted">none</span>'));
     const iss=rackIssues(i);
     const tip=[iss.height?"exceeds load height":"",iss.length?"combined length exceeds load length":""].filter(Boolean).join(" · ");
     const warnIcon=(iss.height||iss.length)?` <span class="row-warn" title="${tip}">⚠</span>`:"";
     row.innerHTML=`
       <span class="mp-pos">${p}${warnIcon}</span>
-      <span class="${res.empty?"mp-muted":""}">${res.empty?"—":c.length+" × "+c.depth+" × "+c.height}</span>
+      <span class="${res.empty?"mp-muted":""}">${res.empty?"—":(bench?BENCH_L+"L \u00d7 "+BENCH_H+"H \u00d7 "+BENCH_D+"D":dimStr(c))}</span>
       <span>${trays}</span>
       <span class="mp-muted">${storageStr}</span>
       <span>${optStr}</span>
@@ -1367,11 +2429,23 @@ function renderMainPage(){
     wrap.appendChild(row);
   });
   $("mpVanTotal").textContent=total.toFixed(3)+" kg";
+  const wn=$("mpWtNote");
+  if(wn){
+    const miss=vanMissingWt();
+    wn.textContent=miss.length?(listPhrase(miss)+" are not in this total — weights not yet supplied."):"";
+    wn.classList.toggle("show",miss.length>0);
+  }
 
   // ---- consolidated parts list ----
   const partsWrap=$("mpPartsRows");
   if(partsWrap){
     const parts=buildPartsList();
+    const pb=$("partsPdfBtn"), xb=$("partsXlsBtn");
+    if(pb&&xb){
+      const none=(parts.length===0);
+      [pb,xb].forEach(b=>{ b.disabled=none; b.title=none?"Configure a rack first":
+        ("Export just the parts list as "+(b===pb?"a PDF":"an Excel spreadsheet")); });
+    }
     if(parts.length===0){
       partsWrap.innerHTML=`<div class="mp-prow"><span class="mp-muted" style="grid-column:1/-1">No racks configured yet.</span></div>`;
     }else{
@@ -1407,13 +2481,16 @@ function renderVan(){
         <span class="name">${p}${warnIcon}</span>
         <span class="wt${res.empty?" empty":""}">${res.empty?"—":res.total.toFixed(3)+" kg"}</span>
       </div>
-      ${res.empty?"":`<div class="meta">
-        <span class="dim">${c.length} × ${c.depth} × ${c.height} mm</span>
+      ${res.empty?"":(isBench(c)?`<div class="meta">
+        <span class="dim">${BENCH_L}L \u00d7 ${BENCH_H}H \u00d7 ${BENCH_D}D mm</span>
+        <span>${c.bench}</span>
+      </div>`:`<div class="meta">
+        <span class="dim">${dimStr(c)} mm</span>
         <span>${res.fitted} tray${res.fitted===1?"":"s"}</span>
         ${kickN(c)>0?`<span>${kickN(c)}x kick</span>`:""}
         ${c.trough==="Yes"?`<span>trough ${c.troughLen}</span>`:""}
-      </div>`}
-      <div class="code${res.empty?" none":""}">${res.empty?"NOT CONFIGURED":res.code}</div>`;
+      </div>`)}
+      <div class="code${res.empty?" none":(res.shareable?"":" unshareable")}">${res.empty?"NOT CONFIGURED":(res.shareable?res.code:(isBench(c)?"WORKBENCH \u2014 NO CODE":"NO SHARE CODE"))}</div>`;
     row.addEventListener("click",()=>switchView(i));
     wrap.appendChild(row);
   });
@@ -1427,15 +2504,21 @@ function renderVan(){
   if(id==="length") state[active].lengthSet=true;   // rack now counts toward its wall's length budget
   refresh();
 }));
+$("benchType").addEventListener("change",e=>{
+  state[active].bench=e.target.value;
+  refresh();
+});
 $("notes").addEventListener("input",e=>{state[active].notes=e.target.value;});
+$("bandSlot").addEventListener("change",e=>{ state[active].bandSlot=+e.target.value; refresh(); });
 $("resetBtn").addEventListener("click",()=>{
   state[active]=blankConfig();
-  loadForm();renderTabs();renderVan();
+  loadForm();renderTabs();renderVan();renderMainPage();
   const b=$("resetBtn");b.textContent="Reset";b.classList.add("copied");
   setTimeout(()=>{b.textContent="Reset rack";b.classList.remove("copied");},1000);
 });
 $("copyBtn").addEventListener("click",()=>{
-  const code=$("codeReadout").textContent;if(code==="—")return;
+  const code=$("codeReadout").textContent;
+  if(code==="\u2014"||code==="NO SHARE CODE")return;
   navigator.clipboard?.writeText(code).then(()=>{
     const b=$("copyBtn");b.textContent="Copied";b.classList.add("copied");
     setTimeout(()=>{b.textContent="Copy code";b.classList.remove("copied");},1400);
@@ -1449,9 +2532,14 @@ $("vanSize").addEventListener("change",e=>{van.size=e.target.value;updateVanDisp
 
 function updateVanDisplay(){
   const el=$("vanInfoDisplay");
-  if(el) el.textContent=`${van.make} ${van.model} · ${van.size}`;
+  if(el) el.textContent=vanChosen()?`${van.make} ${van.model} · ${van.size}`:"No vehicle selected";
 
   const d=vanData();
+  if(!d){
+    const dw=$("vanSpecDims"); if(dw) dw.innerHTML="";
+    checkLimits();
+    return;
+  }
 
   // dimension panel
   const dimsWrap=$("vanSpecDims");
@@ -1475,8 +2563,26 @@ function updateVanDisplay(){
 /* ====== RACK SIZE CONSTRAINTS vs van internal dimensions ====== */
 /* Per-rack constraint issues (shared by the van overview and checkLimits).
    Returns {height:bool, length:bool} for rack index i against the current van. */
-const OFFSIDE_WALL=[0,1,2], NEARSIDE_WALL=[3];
+const OFFSIDE_WALL=[0,1,2], NEARSIDE_WALL=[3], BULKHEAD=4;
+/* Consumption helpers for the "remaining" figures on the vehicle panel.
+   Length is cumulative along a wall (the three offside positions share one run).
+   The bulkhead runs across the van, so it is excluded from the length budget —
+   same exclusion the length warning already uses. */
+function wallOf(i){
+  if(OFFSIDE_WALL.indexOf(i)>=0) return OFFSIDE_WALL;
+  if(NEARSIDE_WALL.indexOf(i)>=0) return NEARSIDE_WALL;
+  return null;
+}
+/* One place that answers "how long / tall / deep is whatever is in this position",
+   so the length, height and width budgets all agree for racks and benches alike. */
+function posLength(c){ return isBench(c)?BENCH_L:+c.length; }
+function posHeight(c){ return isBench(c)?BENCH_H:(+c.height+(c.trough==="Yes"?troughHeight(c):0)); }
+function wallLengthUsed(wall){
+  if(!wall) return 0;
+  return wall.reduce((sum,j)=>sum+(rackConfigured(state[j])?posLength(state[j]):0),0);
+}
 function rackConfigured(cfg){
+  if(isBench(cfg)) return true;          // a workbench occupies the position
   return cfg && cfg.length>0 &&
     (cfg.lengthSet===true ||
      kickN(cfg)>0 || cfg.trough==="Yes" || (cfg.trays||[]).some(t=>t.type && t.type!=="(none)"));
@@ -1485,16 +2591,17 @@ function rackIssues(i){
   const d=vanData();
   const c=state[i];
   const out={height:false,length:false};
+  if(!d) return out;                   // no van chosen yet, so no envelope to breach
   if(!rackConfigured(c)) return out;   // unconfigured racks raise no flags
   // height (rack + trough if fitted) vs load height
-  const effH=+c.height + (c.trough==="Yes"?100:0);
+  const effH=posHeight(c);
   out.height = effH > d.loadHeight;
   // length: combined lengths of configured racks sharing this wall vs load length
   let wall=null;
   if(OFFSIDE_WALL.includes(i)) wall=OFFSIDE_WALL;
   else if(NEARSIDE_WALL.includes(i)) wall=NEARSIDE_WALL;
   if(wall){
-    const combined=wall.reduce((s,j)=> s + (rackConfigured(state[j]) ? +state[j].length : 0), 0);
+    const combined=wallLengthUsed(wall);
     out.length = combined > d.loadLength;
   }
   return out;
@@ -1506,10 +2613,16 @@ function checkLimits(){
   const warn=$("limitWarn");
   const hSel=$("height"), lSel=$("length");
   if(!warn||!hSel||!lSel) return;
+  if(!d){                              // no van, so nothing to check against yet
+    warn.textContent="Pick a vehicle to check this rack fits.";
+    warn.classList.add("show");
+    [...hSel.options].concat([...lSel.options]).forEach(o=>{ o.disabled=false; });
+    return;
+  }
 
   const msgs=[];
   // Effective rack height includes trough (100mm) when fitted — trough sits on top of the rack
-  const TROUGH_H=100;
+  const TROUGH_H=troughHeight(c);
   const troughFitted=(c.trough==="Yes");
   const effectiveH=+c.height+(troughFitted?TROUGH_H:0);
   const overH=effectiveH>d.loadHeight;
@@ -1554,8 +2667,17 @@ function checkLimits(){
 $("custName").addEventListener("input",e=>{job.customer=e.target.value;});
 $("specName").addEventListener("input",e=>{job.spec=e.target.value;});
 $("quoteNum").addEventListener("input",e=>{
-  e.target.value=e.target.value.replace(/[^0-9A-Za-z\-]/g,"");
-  job.quote=e.target.value;
+  /* Digits only, same as the rev box. Pasting "MVCS-04821" leaves 04821, and the
+     caret is restored so filtering mid-string doesn't jump it to the end. */
+  const el=e.target, before=el.value, pos=el.selectionStart;
+  const clean=before.replace(/[^0-9]/g,"");
+  if(clean!==before){
+    const removed=before.slice(0,pos).replace(/[0-9]/g,"").length;
+    el.value=clean;
+    const p=Math.max(0,pos-removed);
+    try{ el.setSelectionRange(p,p); }catch(_){}
+  }
+  job.quote=el.value;
 });
 /* Revision is held separately from the quote number so a revision can never be
    typed into (or lost from) the quote reference itself. */
@@ -1565,14 +2687,17 @@ $("quoteRev").addEventListener("input",e=>{
 });
 function quoteNo(){ return job.quote.trim()?("MVCS-"+job.quote.trim().replace(/^MVCS-?/i,"")):""; }
 function revNo(){ return job.rev.trim().replace(/^0+(?=\d)/,""); }
-function quoteFull(){ const q=quoteNo(), r=revNo(); if(!q) return ""; return q+(r?" Rev "+r:""); }
+/* Filenames use the dash-free form (MVCS04821); everything shown on the page or
+   inside a document keeps the dash (MVCS-04821). */
+function quoteNoFlat(){ return quoteNo().replace("-",""); }
+function quoteFull(){ const q=quoteNo(), r=revNo(); if(!q) return ""; return q+(r?" REV "+r:""); }
 
 /* ====== SAVE AS PDF (embedded jsPDF, direct download) ====== */
 function pdfFilename(){
   // MVCS-<quote> [Rev<n>] [<spec>] Racking Config.pdf
   const bits=[];
-  const q=quoteNo(); if(q) bits.push(q);
-  const r=revNo();   if(r) bits.push("Rev"+r);
+  const q=quoteNoFlat(); if(q) bits.push(q);
+  const r=revNo();       if(r) bits.push("REV"+r);
   const sp=job.spec.trim().replace(/[\\/:*?"<>|]/g,"").trim();
   if(sp) bits.push(sp);
   bits.push("Racking Config");
@@ -1613,7 +2738,13 @@ function generatePDF(){
   const quoteRef = quoteFull()? ("Quote "+quoteFull()) : "Quote \u2014";
   const customer = job.customer.trim()||"\u2014";
   const specName = job.spec.trim()||"\u2014";
-  const vehicle  = `${van.make} ${van.model} · ${van.size}`;
+  /* VANS groups models by platform, so the "make" is sometimes a parent group
+     ("Renault / Nissan") whose brand the model already names ("Renault Trafic").
+     Printing both gives "Renault / Nissan Renault Trafic" — drop the repeat. */
+  const makeWords = van.make.split(/[^A-Za-z]+/).filter(Boolean);
+  const vehName = makeWords.some(wd=>van.model.toLowerCase().includes(wd.toLowerCase()))
+    ? van.model : (van.make+" "+van.model);
+  const vehicle  = vehName+" \u00b7 "+van.size;
 
   /* ---------- PAGE 1: JOB SUMMARY ---------- */
   band(quoteRef);
@@ -1624,37 +2755,64 @@ function generatePDF(){
   doc.text("Customer & quote details, vehicle, and all configured rack positions.", M, y); y+=8;
 
   // job detail strip
-  doc.setFillColor(...mist); doc.roundedRect(M, y, W-2*M, 20, 2, 2, "F");
+  doc.setFillColor(...mist); doc.roundedRect(M, y, W-2*M, 24, 2, 2, "F");
   const col=(W-2*M)/4;
-  const jd=[["CUSTOMER",customer],["SPEC",specName],
-            ["QUOTE NUMBER",quoteNo()||"\u2014"],["VEHICLE",vehicle]];
+  /* Values are fitted to the column by measured width, never by character count:
+     try 10pt, step down to 8pt, then wrap onto a second line. `parts` lets a value
+     break at a sensible point of its own (vehicle breaks make/model | size) rather
+     than wherever the text happens to run out. */
+  const fitVal=(txt,parts,maxW)=>{
+    /* `parts` means one part per line, always (vehicle: make / model / size).
+       Size is the largest that fits every part, so the lines stay matched. */
+    if(parts&&parts.length){
+      const ps=parts.map(String);
+      for(let fs=10; fs>=7; fs-=0.5){
+        doc.setFontSize(fs);
+        if(ps.every(p=>doc.getTextWidth(p)<=maxW)) return {size:fs,lines:ps};
+      }
+      doc.setFontSize(7);
+      let ls=[]; ps.forEach(p=>{ ls=ls.concat(doc.splitTextToSize(p,maxW)); });
+      return {size:7,lines:ls};        // wrap rather than drop anything
+    }
+    for(let fs=10; fs>=8; fs-=0.5){
+      doc.setFontSize(fs);
+      if(doc.getTextWidth(txt)<=maxW) return {size:fs,lines:[txt]};
+    }
+    doc.setFontSize(8);
+    return {size:8,lines:doc.splitTextToSize(txt,maxW).slice(0,3)};
+  };
+  const jd=[["CUSTOMER",customer,null],["SPEC",specName,null],
+            ["QUOTE NUMBER",quoteNo()||"\u2014",null],
+            ["VEHICLE",vehicle,[van.make, van.model, van.size]]];
   jd.forEach((d,i)=>{
     const x=M+5+col*i;
     doc.setFontSize(7); doc.setTextColor(...faint); doc.setFont("helvetica","bold");
     doc.text(d[0], x, y+7);
-    doc.setFontSize(10); doc.setTextColor(...shark);
-    let val=String(d[1]).substring(0,20);
-    // Revision runs in line with the quote number, same size, in Monza red.
+    doc.setTextColor(...shark);
+    // Revision runs in line with the quote number, matching its size, in Monza red.
     const rev=(i===2&&revNo())?("REV "+revNo()):"";
+    const gap=3;
+    doc.setFontSize(10);
+    const revW=rev?doc.getTextWidth(rev)+gap:0;
+    const fit=fitVal(String(d[1]),d[2],col-8-revW);
+    doc.setFontSize(fit.size);
+    const n=fit.lines.length;
+    const top=(n===1?13.5:n===2?12.5:n===3?11.5:10.5), step=(n<=2?4.5:4);
+    fit.lines.forEach((ln,k)=>doc.text(ln,x,y+top+step*k));
     if(rev){
-      const avail=col-8, gap=3, rw=doc.getTextWidth(rev)+gap;
-      while(val.length>1 && doc.getTextWidth(val)+rw>avail) val=val.slice(0,-1);
-      doc.text(val, x, y+13);
-      const vw=doc.getTextWidth(val);
+      const vw=doc.getTextWidth(fit.lines[0]);
       doc.setTextColor(...monza);
-      doc.text(rev, x+vw+gap, y+13);
-    } else {
-      doc.text(val, x, y+13);
+      doc.text(rev,x+vw+gap,y+top);
     }
   });
-  y+=28;
+  y+=32;
 
   // summary table header — 6 cols (no CODE on summary): pos | dims | trays | storage | components | weight
   // Row height is fixed at 10mm to accommodate wrapped text like code.
   // Columns: pos(0) | dims(1) | trays(2) | storage(3) | components(4) | code(5) | weight(right-aligned)
   const cPos=M, cDim=M+32, cTray=M+72, cStor=M+83, cComp=M+114, cCode=M+141, cWt=W-M;
   doc.setFontSize(7.5); doc.setTextColor(...faint); doc.setFont("helvetica","bold");
-  doc.text("POSITION",cPos,y); doc.text("DIMENSIONS",cDim,y);
+  doc.text("POSITION",cPos,y); doc.text("DIMENSIONS (L \u00d7 H \u00d7 D)",cDim,y);
   doc.text("TRAYS",cTray,y); doc.text("STORAGE",cStor,y);
   doc.text("COMPONENTS",cComp,y);
   doc.text("WEIGHT",cWt,y,{align:"right"});
@@ -1667,11 +2825,13 @@ function generatePDF(){
     doc.setFont("helvetica","bold"); doc.setFontSize(8.5); doc.setTextColor(...shark);
     doc.text(p, cPos, rowY);
     doc.setFont("helvetica","normal"); doc.setTextColor(...(res.empty?faint:ink)); doc.setFontSize(8);
-    doc.text(res.empty?"—":`${c.length}×${c.depth}×${c.height}`, cDim, rowY);
+    doc.text(res.empty?"\u2014":dimStr(c), cDim, rowY);
     doc.text(res.empty?"—":String(res.fitted), cTray, rowY);
     const storSet=[...new Set(c.trays.filter(t=>t.type!=="(none)"&&t.storage!=="(none)").map(t=>t.storage))];
     doc.text(res.empty?"—":(storSet.join(", ")||"—"), cStor, rowY, {maxWidth:28});
-    const opts=[]; if(kickN(c)>0)opts.push(kickN(c)+"x Kick"); if(c.trough==="Yes")opts.push("Trough "+c.troughLen);
+    const opts=[];
+    if(hasDrawers(c))opts.push("Drawers: "+drawerStacks(c).map(b=>b.stack).join(" | "));
+    if(kickN(c)>0)opts.push(kickN(c)+"x Kick"); if(c.trough==="Yes")opts.push("Trough "+c.troughLen);
     doc.text(res.empty?"—":(opts.join(", ")||"none"), cComp, rowY, {maxWidth:24});
     doc.setTextColor(...(res.empty?faint:shark)); doc.setFont("helvetica","bold"); doc.setFontSize(8.5);
     doc.text(res.empty?"—":res.total.toFixed(3)+" kg", cWt, rowY, {align:"right"});
@@ -1689,8 +2849,16 @@ function generatePDF(){
   y+=9.5;
   doc.setFont("helvetica","italic"); doc.setFontSize(7.5); doc.setTextColor(...faint);
   doc.text("Please note: all weights are estimations and may vary during build.", M, y);
+  /* Drawer parts carry no weight yet, so a total that includes a drawer band is
+     short by a real amount. Say so on the sheet rather than let it read as final. */
+  const missWt=vanMissingWt();
+  if(missWt.length){
+    y+=4;
+    doc.setTextColor(...monza);
+    doc.text(listPhrase(missWt)+" are not included in this total \u2014 weights not yet supplied.", M, y);
+  }
 
-  // ---- CONSOLIDATED PARTS LIST (PARTS DWG) ----
+  // ---- CONSOLIDATED PARTS LIST ----
   const parts=buildPartsList();
   if(parts.length){
     y+=14;
@@ -1698,7 +2866,7 @@ function generatePDF(){
     function partsHeader(){
       doc.setFillColor(...shark); doc.rect(M, y-5, W-2*M, 7, "F");
       doc.setFont("helvetica","bold"); doc.setFontSize(8.5); doc.setTextColor(255,255,255);
-      doc.text("PARTS DWG", W/2, y, {align:"center"});
+      doc.text("PARTS LIST", W/2, y, {align:"center"});
       y+=7;
       // column headers
       doc.setFontSize(6.5); doc.setTextColor(...faint);
@@ -1769,8 +2937,40 @@ function generatePDF(){
       doc.text(String(v), M+50, y); y+=6;
     }
 
+    if(isBench(c)){
+      secH("Workbench");
+      spec("Assembly", c.bench);
+      spec("Length", BENCH_L+" mm"); spec("Height", BENCH_H+" mm"); spec("Depth", BENCH_D+" mm");
+      y+=3;
+      secH("Contents");
+      doc.setFontSize(7.5); doc.setTextColor(...faint); doc.setFont("helvetica","bold");
+      doc.text("ITEM",M,y); doc.text("QTY",W-M,y,{align:"right"});
+      y+=2; doc.setDrawColor(...line); doc.line(M,y,W-M,y); y+=5;
+      (BENCHES[c.bench]||[]).concat([{desc:"Kick strip",qty:BENCH_KICK_QTY}]).forEach(x=>{
+        doc.setFont("helvetica","normal"); doc.setFontSize(9); doc.setTextColor(...ink);
+        doc.text(x.desc,M,y);
+        doc.setFont("helvetica","bold");
+        doc.text(String(x.qty),W-M,y,{align:"right"});
+        y+=4; doc.setDrawColor(...line); doc.setLineWidth(0.2); doc.line(M,y,W-M,y); y+=5;
+      });
+      y+=3;
+      if((c.notes||"").trim()){
+        doc.setFont("helvetica","italic"); doc.setFontSize(9); doc.setTextColor(...soft);
+        const ln=doc.splitTextToSize("Additional options: "+c.notes.trim(), W-2*M-6);
+        doc.setDrawColor(...line); doc.roundedRect(M,y,W-2*M,ln.length*5+6,2,2);
+        doc.text(ln,M+3,y+6); y+=ln.length*5+12;
+      }
+      const by=271,bh=13;
+      doc.setFillColor(...shark); doc.roundedRect(M,by,W-2*M,bh,2,2,"F");
+      doc.setFontSize(7.5); doc.setTextColor(174,182,191); doc.setFont("helvetica","bold");
+      doc.text("DESIGN SHARE CODE",W/2,by+5,{align:"center"});
+      doc.setFontSize(11); doc.setTextColor(...monza);
+      doc.text("WORKBENCH \u2014 NO CODE",W/2,by+10,{align:"center"});
+      return;
+    }
+
     secH("Rack");
-    spec("Height", c.height+" mm"); spec("Length", c.length+" mm"); spec("Depth", c.depth+" mm");
+    spec("Length", c.length+" mm"); spec("Height", c.height+" mm"); spec("Depth", c.depth+" mm");
     y+=3;
 
     secH("Trays");
@@ -1788,6 +2988,43 @@ function generatePDF(){
       y+=4; doc.setDrawColor(...line); doc.setLineWidth(0.2); doc.line(M,y,W-M,y); y+=5;
     });
     y+=3;
+
+    /* Drawer band — only printed when one is fitted, so an ordinary rack sheet
+       looks exactly as it did before. */
+    if(hasDrawers(c)){
+      secH("Drawer units");
+      doc.setFontSize(7.5); doc.setTextColor(...faint); doc.setFont("helvetica","bold");
+      doc.text("BAY",M,y); doc.text("STACK",M+30,y);
+      doc.text("PART",M+78,y); doc.text("QTY",W-M,y,{align:"right"});
+      y+=2; doc.setDrawColor(...line); doc.line(M,y,W-M,y); y+=5;
+      const dbays=drawerStacks(c), dsplit=isSplit(c.length);
+      dbays.forEach((b,bi)=>{
+        const s=stackOpt(b.stack); if(!s) return;
+        s.units.forEach((u,ui)=>{
+          const part=DRAWER_PART[u.h+"|"+s.width]||"TBC";
+          doc.setFont("helvetica","normal"); doc.setFontSize(9); doc.setTextColor(...ink);
+          doc.text(ui===0?(dsplit?(s.width+" mm"):"Full"):"",M,y);
+          doc.text(ui===0?(s.h+" mm"):"",M+30,y);
+          doc.text(u.h+"x"+s.width+"  "+part,M+78,y);
+          doc.text(String(u.q),W-M,y,{align:"right"});
+          y+=4; doc.setDrawColor(...line); doc.setLineWidth(0.2); doc.line(M,y,W-M,y); y+=5;
+        });
+      });
+      if(dsplit){
+        const ipart=infillPart(dbays[0].stack)||"TBC";
+        doc.setFont("helvetica","normal"); doc.setFontSize(9); doc.setTextColor(...ink);
+        doc.text("Divider",M,y); doc.text(stackHeight(dbays[0].stack)+" mm",M+30,y);
+        doc.text("Infill panel  "+ipart,M+78,y); doc.text("2",W-M,y,{align:"right"});
+        y+=4; doc.setDrawColor(...line); doc.setLineWidth(0.2); doc.line(M,y,W-M,y); y+=5;
+      }
+      const stLen=INT_LEN[c.length]||960, spart=supportTrayPart(stLen)||"TBC";
+      doc.setFont("helvetica","normal"); doc.setFontSize(9); doc.setTextColor(...ink);
+      doc.text("Under",M,y); doc.text(SUPPORT_TRAY_H+" mm",M+30,y);
+      doc.text("Support tray "+stLen+"  "+spart,M+78,y); doc.text("1",W-M,y,{align:"right"});
+      y+=4; doc.setDrawColor(...line); doc.setLineWidth(0.2); doc.line(M,y,W-M,y); y+=5;
+      spec("Band height", bandHeight(c)+" mm");
+      y+=3;
+    }
 
     secH("Components");
     spec("Kick strip", kickN(c)===0?"No":kickN(c)+"x"); spec("Trough", c.trough==="Yes"? c.troughLen+" mm":"No");
@@ -1835,7 +3072,18 @@ function generatePDF(){
     doc.setFontSize(7.5); doc.setTextColor(174,182,191); doc.setFont("helvetica","bold");
     doc.text("DESIGN SHARE CODE", W/2, by+5, {align:"center"});
     doc.setFontSize(11); doc.setTextColor(...monza);
-    doc.text(res.code, W/2, by+10, {align:"center"});
+    /* Say what actually stops the code being issued. This used to name the tapered
+       tray whatever the reason, so an R286 or workbench sheet reported the wrong
+       part; calc() already lists the real reasons in res.unshareable. */
+    let codeTxt;
+    if(res.shareable) codeTxt=res.code;
+    else if(isBench(c)) codeTxt="WORKBENCH \u2014 NO SHARE CODE";
+    else codeTxt="NO SHARE CODE \u2014 CONTAINS "+
+      (res.unshareable&&res.unshareable.length?res.unshareable.join(" + ").toUpperCase():"AN UNCODED PART");
+    const maxCodeW=W-2*M-8;
+    let cfs=11;
+    while(cfs>6.5){ doc.setFontSize(cfs); if(doc.getTextWidth(codeTxt)<=maxCodeW) break; cfs-=0.5; }
+    doc.text(codeTxt, W/2, by+10, {align:"center"});
   });
 
   // page numbers after all pages exist
@@ -1853,11 +3101,310 @@ function generatePDF(){
   document.body.removeChild(a);
 }
 
+/* ======================================================================
+   PARTS-LIST-ONLY EXPORTS  (PDF + Excel)
+   Both reuse buildPartsList(), so they can never drift from what the
+   Quote Summary shows on screen.
+   ====================================================================== */
+function partsFilename(ext){
+  const bits=[];
+  const q=quoteNoFlat(); if(q) bits.push(q);
+  const r=revNo();       if(r) bits.push("REV"+r);
+  const sp=job.spec.trim().replace(/[\\/:*?"<>|]/g,"").trim();
+  if(sp) bits.push(sp);
+  bits.push("Parts List");
+  return bits.join(" ")+"."+ext;
+}
+function partsJobLines(){
+  const out=[];
+  if(job.customer.trim()) out.push(["Customer",job.customer.trim()]);
+  if(job.spec.trim())     out.push(["Spec",job.spec.trim()]);
+  if(quoteNo())           out.push(["Quote",quoteNo()+(revNo()?"  REV "+revNo():"")]);
+  out.push(["Vehicle",van.make+" "+van.model+" · "+van.size]);
+  return out;
+}
+function downloadBytes(bytes,mime,fname){
+  // data: URI rather than blob: — FortiClient blocks blob:null (same reason as the quote PDF)
+  let bin=""; const CH=8192;
+  for(let i=0;i<bytes.length;i+=CH) bin+=String.fromCharCode.apply(null,bytes.subarray(i,i+CH));
+  const a=document.createElement("a");
+  a.href="data:"+mime+";base64,"+btoa(bin);
+  a.download=fname;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+/* ---------- PDF: the parts list on its own ---------- */
+function generatePartsPDF(){
+  const parts=buildPartsList();
+  if(!parts.length){ alert("Nothing to export — no racks are configured yet."); return; }
+  const { jsPDF }=window.jspdf;
+  const doc=new jsPDF({unit:"mm",format:"a4"});
+  const W=210, M=14;
+  const monza=[212,0,56], shark=[37,41,46], ink=[26,29,33],
+        soft=[92,99,107], faint=[154,161,168], line=[226,229,232];
+  const logoSrc=(document.querySelector(".brand-img")||{}).src||"";
+  const LOGO_W=46, LOGO_H=LOGO_W/5.88;
+  const ref=quoteFull()?("Quote "+quoteFull()):"Quote —";
+
+  function band(){
+    if(logoSrc){
+      try{ doc.addImage(logoSrc,"PNG",M,9,LOGO_W,LOGO_H); }
+      catch(e){
+        doc.setFillColor.apply(doc,monza); doc.triangle(M,18,M,11,M+7,18,"F");
+        doc.setTextColor.apply(doc,shark); doc.setFont("helvetica","bold"); doc.setFontSize(15);
+        doc.text("MACKWORTH",M+10,17);
+      }
+    }
+    doc.setTextColor.apply(doc,faint); doc.setFont("helvetica","normal"); doc.setFontSize(8);
+    doc.text(ref,W-M,15,{align:"right"});
+    doc.text("Parts List",W-M,19,{align:"right"});
+    doc.setDrawColor.apply(doc,monza); doc.setLineWidth(0.6); doc.line(M,25,W-M,25);
+  }
+
+  const pItem=20.8,pQty=35.7,pPart=58.8,pDesc=92.8,pStock=125.4,pLen=148.5,pHt=167.5,pDep=186.5;
+  let y;
+  function tableHeader(){
+    doc.setFillColor.apply(doc,shark); doc.rect(M,y-5,W-2*M,7,"F");
+    doc.setFont("helvetica","bold"); doc.setFontSize(8.5); doc.setTextColor(255,255,255);
+    doc.text("PARTS LIST",W/2,y,{align:"center"});
+    y+=7;
+    doc.setFontSize(6.5); doc.setTextColor.apply(doc,faint);
+    doc.text("ITEM",pItem,y,{align:"center"});   doc.text("QTY",pQty,y,{align:"center"});
+    doc.text("PART NUMBER",pPart,y,{align:"center"}); doc.text("DESCRIPTION",pDesc,y,{align:"center"});
+    doc.text("STOCK NUMBER",pStock,y,{align:"center"});
+    doc.text("LENGTH",pLen,y,{align:"center"}); doc.text("HEIGHT",pHt,y,{align:"center"});
+    doc.text("DEPTH",pDep,y,{align:"center"});
+    y+=2; doc.setDrawColor.apply(doc,line); doc.setLineWidth(0.3); doc.line(M,y,W-M,y); y+=4.5;
+  }
+
+  band();
+  y=34;
+  doc.setTextColor.apply(doc,shark); doc.setFont("helvetica","bold"); doc.setFontSize(18);
+  doc.text("Parts List",M,y); y+=6;
+  doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor.apply(doc,soft);
+  doc.text("Every part required across all configured rack positions.",M,y); y+=8;
+
+  // job detail lines, label + value, wrapped so nothing is cut
+  partsJobLines().forEach(function(d){
+    doc.setFont("helvetica","bold"); doc.setFontSize(7); doc.setTextColor.apply(doc,faint);
+    doc.text(d[0].toUpperCase(),M,y);
+    doc.setFont("helvetica","bold"); doc.setFontSize(9.5); doc.setTextColor.apply(doc,shark);
+    const lines=doc.splitTextToSize(String(d[1]),W-2*M-30);
+    doc.text(lines,M+28,y);
+    y+=Math.max(5,lines.length*4.5);
+  });
+  y+=9;
+
+  tableHeader();
+  parts.forEach(function(p,idx){
+    if(y>278){ doc.addPage(); band(); y=34; tableHeader(); }
+    if(idx%2){ doc.setFillColor(250,251,251); doc.rect(M,y-3.5,W-2*M,6,"F"); }
+    doc.setFont("helvetica","normal"); doc.setFontSize(7.5); doc.setTextColor.apply(doc,ink);
+    doc.text(String(idx+1),pItem,y,{align:"center"});
+    doc.setFont("helvetica","bold");
+    doc.text(String(p.qty),pQty,y,{align:"center"});
+    doc.setFont("helvetica","normal"); doc.setTextColor.apply(doc,shark);
+    doc.text(p.part,pPart,y,{align:"center"});
+    doc.setTextColor.apply(doc,ink);
+    doc.text(p.desc,pDesc,y,{maxWidth:38,align:"center"});
+    doc.text(p.stock,pStock,y,{align:"center"});
+    doc.setTextColor.apply(doc,soft);
+    doc.text(p.length?String(p.length):"—",pLen,y,{align:"center"});
+    doc.text(p.height?String(p.height):"—",pHt,y,{align:"center"});
+    doc.text(p.depth?String(p.depth):"—",pDep,y,{align:"center"});
+    y+=6; doc.setDrawColor.apply(doc,line); doc.setLineWidth(0.15); doc.line(M,y-2.5,W-M,y-2.5);
+  });
+
+  const total=parts.reduce(function(a,b){return a+b.qty;},0);
+  y+=4;
+  doc.setDrawColor.apply(doc,shark); doc.setLineWidth(0.5); doc.line(M,y-4,W-M,y-4);
+  doc.setFont("helvetica","bold"); doc.setFontSize(9); doc.setTextColor.apply(doc,shark);
+  doc.text(parts.length+" line"+(parts.length===1?"":"s"),M,y);
+  doc.setTextColor.apply(doc,monza);
+  doc.text(total+" item"+(total===1?"":"s")+" total",W-M,y,{align:"right"});
+
+  const n=doc.internal.getNumberOfPages();
+  for(let pg=1;pg<=n;pg++){
+    doc.setPage(pg);
+    doc.setFont("helvetica","normal"); doc.setFontSize(8); doc.setTextColor.apply(doc,faint);
+    doc.text("Page "+pg+" of "+n,W/2,291,{align:"center"});
+  }
+
+  const fname=partsFilename("pdf");
+  const a=document.createElement("a");
+  a.href=doc.output("datauristring",{filename:fname});
+  a.download=fname;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+/* ---------- Excel: a real .xlsx, written here so the file stays self-contained ---------- */
+function crc32(b){
+  let t=crc32.t;
+  if(!t){ t=crc32.t=[]; for(let n=0;n<256;n++){ let c=n; for(let k=0;k<8;k++) c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1); t[n]=c>>>0; } }
+  let crc=-1;
+  for(let i=0;i<b.length;i++) crc=(crc>>>8)^t[(crc^b[i])&0xFF];
+  return (crc^-1)>>>0;
+}
+function zipStore(files){
+  const enc=new TextEncoder(), local=[], central=[];
+  let off=0;
+  files.forEach(function(f){
+    const nm=enc.encode(f.name), d=f.data, crc=crc32(d);
+    const lh=new Uint8Array(30+nm.length), lv=new DataView(lh.buffer);
+    lv.setUint32(0,0x04034b50,true); lv.setUint16(4,20,true);
+    lv.setUint32(14,crc,true); lv.setUint32(18,d.length,true); lv.setUint32(22,d.length,true);
+    lv.setUint16(26,nm.length,true);
+    lh.set(nm,30);
+    local.push(lh,d);
+    const ch=new Uint8Array(46+nm.length), cv=new DataView(ch.buffer);
+    cv.setUint32(0,0x02014b50,true); cv.setUint16(4,20,true); cv.setUint16(6,20,true);
+    cv.setUint32(16,crc,true); cv.setUint32(20,d.length,true); cv.setUint32(24,d.length,true);
+    cv.setUint16(28,nm.length,true); cv.setUint32(42,off,true);
+    ch.set(nm,46);
+    central.push(ch);
+    off+=lh.length+d.length;
+  });
+  const cdLen=central.reduce(function(a,b){return a+b.length;},0);
+  const eo=new Uint8Array(22), ev=new DataView(eo.buffer);
+  ev.setUint32(0,0x06054b50,true);
+  ev.setUint16(8,files.length,true); ev.setUint16(10,files.length,true);
+  ev.setUint32(12,cdLen,true); ev.setUint32(16,off,true);
+  const all=local.concat(central,[eo]);
+  const out=new Uint8Array(all.reduce(function(a,b){return a+b.length;},0));
+  let o=0; all.forEach(function(b){ out.set(b,o); o+=b.length; });
+  return out;
+}
+function generatePartsXLSX(){
+  const parts=buildPartsList();
+  if(!parts.length){ alert("Nothing to export — no racks are configured yet."); return; }
+  const esc=function(v){ return String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;").replace(/"/g,"&quot;"); };
+  const colName=function(n){ let s=""; while(n>0){ const m=(n-1)%26; s=String.fromCharCode(65+m)+s; n=(n-m-1)/26; } return s; };
+
+  // rows: job detail block, blank, header, data
+  const rows=[];
+  partsJobLines().forEach(function(d){ rows.push([{v:d[0],st:0},{v:d[1],st:0}]); });
+  rows.push([]);
+  const headRow=rows.length+1;
+  rows.push(["Item","Qty","Part Number","Description","Stock Number","Length","Height","Depth"]
+    .map(function(h){ return {v:h,st:1}; }));
+  parts.forEach(function(p,i){
+    rows.push([{v:i+1},{v:p.qty},{v:p.part},{v:p.desc},{v:p.stock},
+               {v:p.length===""?"—":p.length},{v:p.height===""?"—":p.height},
+               {v:p.depth===""?"—":p.depth}]);
+  });
+
+  let sheet="";
+  rows.forEach(function(r,ri){
+    if(!r.length){ return; }
+    let cells="";
+    r.forEach(function(c,ci){
+      if(c===undefined||c===null) return;
+      const ref=colName(ci+1)+(ri+1);
+      const st=c.st?' s="'+c.st+'"':"";
+      const num=(typeof c.v==="number")||(c.v!==""&&c.v!=="—"&&!isNaN(c.v)&&String(c.v).trim()!==""&&/^-?\d+(\.\d+)?$/.test(String(c.v)));
+      if(num) cells+='<c r="'+ref+'"'+st+'><v>'+Number(c.v)+'</v></c>';
+      else    cells+='<c r="'+ref+'"'+st+' t="inlineStr"><is><t xml:space="preserve">'+esc(c.v)+'</t></is></c>';
+    });
+    sheet+='<row r="'+(ri+1)+'">'+cells+'</row>';
+  });
+  const lastRow=rows.length;
+  const sheetXml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
+    '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'+
+    '<cols><col min="1" max="1" width="7" customWidth="1"/><col min="2" max="2" width="7" customWidth="1"/>'+
+    '<col min="3" max="3" width="20" customWidth="1"/><col min="4" max="4" width="30" customWidth="1"/>'+
+    '<col min="5" max="5" width="18" customWidth="1"/><col min="6" max="8" width="10" customWidth="1"/></cols>'+
+    '<sheetData>'+sheet+'</sheetData>'+
+    '<autoFilter ref="A'+headRow+':H'+lastRow+'"/>'+
+    '</worksheet>';
+
+  const stylesXml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
+    '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'+
+    '<fonts count="2"><font><sz val="11"/><name val="Calibri"/></font>'+
+    '<font><b/><color rgb="FFFFFFFF"/><sz val="11"/><name val="Calibri"/></font></fonts>'+
+    '<fills count="3"><fill><patternFill patternType="none"/></fill>'+
+    '<fill><patternFill patternType="gray125"/></fill>'+
+    '<fill><patternFill patternType="solid"><fgColor rgb="FF25292E"/><bgColor indexed="64"/></patternFill></fill></fills>'+
+    '<borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders>'+
+    '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>'+
+    '<cellXfs count="2"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>'+
+    '<xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/></cellXfs>'+
+    '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>';
+
+  const enc=new TextEncoder();
+  const files=[
+    {name:"[Content_Types].xml",data:enc.encode('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
+      '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'+
+      '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'+
+      '<Default Extension="xml" ContentType="application/xml"/>'+
+      '<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>'+
+      '<Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>'+
+      '<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>'+
+      '</Types>')},
+    {name:"_rels/.rels",data:enc.encode('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
+      '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+
+      '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>'+
+      '</Relationships>')},
+    {name:"xl/workbook.xml",data:enc.encode('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
+      '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" '+
+      'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">'+
+      '<sheets><sheet name="Parts List" sheetId="1" r:id="rId1"/></sheets></workbook>')},
+    {name:"xl/_rels/workbook.xml.rels",data:enc.encode('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
+      '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+
+      '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/>'+
+      '<Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>'+
+      '</Relationships>')},
+    {name:"xl/styles.xml",data:enc.encode(stylesXml)},
+    {name:"xl/worksheets/sheet1.xml",data:enc.encode(sheetXml)}
+  ];
+  downloadBytes(zipStore(files),
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    partsFilename("xlsx"));
+}
+
+$("partsPdfBtn").addEventListener("click",function(){
+  try{ generatePartsPDF(); }
+  catch(e){ console.error(e); alert("Could not generate the parts PDF: "+e.message); }
+});
+$("partsXlsBtn").addEventListener("click",function(){
+  try{ generatePartsXLSX(); }
+  catch(e){ console.error(e); alert("Could not generate the spreadsheet: "+e.message); }
+});
+
 $("pdfBtn").addEventListener("click",()=>{
   const btn=$("pdfBtn");
   try{ generatePDF(); }
   catch(e){ console.error(e); alert("Could not generate the PDF: "+e.message); }
 });
+
+/* ====== LIGHT / DARK ======
+   Starts from a saved choice, else whatever the operating system is set to, and
+   follows the system while no explicit choice has been made. Storage is wrapped
+   because a browser opened from a file:// path can refuse it outright. */
+(function(){
+  const KEY="mvcs-theme";
+  const mq=window.matchMedia?window.matchMedia("(prefers-color-scheme: dark)"):null;
+  function read(){ try{ return localStorage.getItem(KEY); }catch(_){ return null; } }
+  function save(v){ try{ localStorage.setItem(KEY,v); }catch(_){} }
+  function apply(mode){
+    const dark=(mode==="dark");
+    document.documentElement.setAttribute("data-theme",dark?"dark":"light");
+    const btn=document.getElementById("themeToggle");
+    if(btn){
+      btn.setAttribute("aria-checked",String(dark));
+      btn.title=dark?"Switch to light mode":"Switch to dark mode";
+    }
+  }
+  apply(read() || ((mq&&mq.matches)?"dark":"light"));
+  if(mq&&mq.addEventListener){
+    mq.addEventListener("change",e=>{ if(!read()) apply(e.matches?"dark":"light"); });
+  }
+  const btn=document.getElementById("themeToggle");
+  if(btn) btn.addEventListener("click",()=>{
+    const next=document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark";
+    save(next); apply(next);
+  });
+})();
 
 initVanDropdowns();
 updateVanDisplay();
@@ -1868,7 +3415,7 @@ switchView("main");
 const INV_LEN={A:500,B:750,C:1000,D:1250,E:1500};
 const INV_DEP={"3":320,"4":420};
 const INV_HGT={A:905,B:1150,C:1220,D:1640};
-const INV_TRAY={A:"30mm Tray",B:"100mm Tray",C:"Drop Front Tray",T:TAPERED,N:"(none)"};
+const INV_TRAY={A:"30mm Tray",B:"100mm Tray",C:"Drop Front Tray",N:"(none)"};
 const INV_TROUGH={"1":1500,"2":1750,"3":2000,"4":2250,"5":2500,"6":2750,"7":3000};
 function decodeRackCode(raw){
   const code=(raw||"").trim().toUpperCase();
@@ -1885,11 +3432,16 @@ function decodeRackCode(raw){
   if(p[9]==="N"){trough="No";troughLen=0;}
   else if(p[9] in INV_TROUGH){trough="Yes";troughLen=INV_TROUGH[p[9]];}
   else return null;
-  return {height:height,length:length,depth:depth,kick:kick,kickQty:kickQty,trough:trough,troughLen:troughLen,trays:trays,notes:""};
+  return {bench:BENCH_NONE,lengthSet:true,
+          height:height,length:length,depth:depth,kick:kick,kickQty:kickQty,trough:trough,troughLen:troughLen,trays:trays,notes:""};
 }
 function doImport(){
   const raw=$("importCode").value.trim();
   if(!raw) return;
+  if(isBench(state[active])){
+    alert("This position has a workbench fitted.\n\nSet the workbench back to (none) before loading a share code.");
+    return;
+  }
   const dec=decodeRackCode(raw);
   if(!dec){ alert("That doesn't look like a valid rack share code.\n\nExpected 10 parts, e.g. C-3-A-4-A-A-A-A-N-N"); return; }
   state[active]=dec;

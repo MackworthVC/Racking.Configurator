@@ -566,6 +566,8 @@
               <option value="1" selected>1</option><option value="2">2</option>
             </select></div>
           </div></div>
+        <div class="row acc-row"><label>Accessories</label>
+          <div class="acc-grid" id="accGrid"></div></div>
         <div class="row"><label for="trough">Trough</label>
           <div class="inline2">
             <div class="control"><select id="trough">
@@ -1611,6 +1613,8 @@ function buildPartsList(){
         if(bd) add(bp,bd.desc,bd.stock,abt.width,(abt.type==="30mm Tray"?30:100),c.depth,abt.qty);
       }
     }
+    // Accessories on the end panels (part numbers TBC)
+    accFitted(c).forEach(f=>add("TBC",f.name,"TBC","","",c.depth,1));
     // Kick strip
     if(kickN(c)>0){
       const ksPart="RC001-009-"+KICK_SUFFIX[tLen]+"A";
@@ -1781,7 +1785,47 @@ function vanData(){
 }
 
 /* ====== STATE: one config object per position ====== */
-function blankConfig(){return{bench:BENCH_NONE,
+/* Accessories fit on the outside of an end panel, below the kick strip option in the
+   form: up to 3 per panel, one each at the top, middle and bottom. The part numbers
+   are not allocated yet, so they list as TBC — edit this table when they are. */
+const ACC_NONE="(none)";
+const ACCESSORIES=["Document holder","Coat hook","Fire extinguisher bracket"];
+const ACC_SLOTS=["Top","Middle","Bottom"];
+const ACC_SIDES=[["L","Left end panel"],["R","Right end panel"]];
+function blankAcc(){return{L:[ACC_NONE,ACC_NONE,ACC_NONE],R:[ACC_NONE,ACC_NONE,ACC_NONE]};}
+function accOf(c){ return (c&&c.acc)||blankAcc(); }
+/* [{side,slot,name}] for every slot with an accessory chosen */
+function accFitted(c){
+  const a=accOf(c), out=[];
+  ACC_SIDES.forEach(([k,label])=>(a[k]||[]).forEach((n,i)=>{
+    if(n&&n!==ACC_NONE) out.push({side:label,slot:ACC_SLOTS[i],name:n,k:k,i:i});
+  }));
+  return out;
+}
+function accSummary(c){
+  const f=accFitted(c);
+  return f.length?f.length+" accessor"+(f.length===1?"y":"ies"):"";
+}
+function buildAccRows(){
+  const g=$("accGrid"), c=state[active], a=accOf(c);
+  let h="";
+  ACC_SIDES.forEach(([k,label])=>{
+    h+='<div class="acc-side">'+label+'</div>';
+    ACC_SLOTS.forEach((sl,i)=>{
+      h+='<label class="acc-slot" for="acc'+k+i+'">'+sl+'</label><div class="control"><select id="acc'+k+i+'" data-side="'+k+'" data-slot="'+i+'">'+
+        '<option value="'+ACC_NONE+'">None</option>'+
+        ACCESSORIES.map(n=>'<option'+((a[k]||[])[i]===n?' selected':'')+'>'+n+'</option>').join("")+
+        '</select></div>';
+    });
+  });
+  g.innerHTML=h;
+  g.querySelectorAll("select").forEach(sel=>sel.addEventListener("change",e=>{
+    const c=state[active]; if(!c.acc) c.acc=blankAcc();
+    c.acc[e.target.dataset.side][+e.target.dataset.slot]=e.target.value;
+    refresh();
+  }));
+}
+function blankConfig(){return{bench:BENCH_NONE,acc:blankAcc(),
   height:"",length:"",depth:"",kick:"No",kickQty:1,trough:"No",troughLen:2000,lengthSet:false,
   trays:[{type:"(none)",storage:"(none)",qty:0},{type:"(none)",storage:"(none)",qty:0},
          {type:"(none)",storage:"(none)",qty:0},{type:"(none)",storage:"(none)",qty:0}],
@@ -1860,6 +1904,8 @@ function calc(c){
      band can't be written into it. Same treatment as the tapered tray: no code
      rather than a code that decodes to the wrong rack. */
   if(hasDrawers(c)) unshareable.push("drawer units");
+  /* nor is there room in the code for accessories */
+  if(accFitted(c).length) unshareable.push("accessories");
   const shareable=unshareable.length===0;
   const tc=c.trays.map(t=>TRAY_CODE[t.type]||"?").join("-");
   const code=[LEN_CODE[c.length],DEP_CODE[c.depth],HGT_CODE[c.height],fitted,tc,
@@ -1897,6 +1943,7 @@ function loadForm(){
   $("height").value=c.height;$("length").value=c.length;$("depth").value=c.depth;
   $("kick").value=c.kick;$("kickQty").value=c.kickQty||1;$("trough").value=c.trough;$("troughLen").value=c.troughLen;
   $("notes").value=c.notes;
+  buildAccRows();
   updateVanDisplay();
   buildBayRows();     // before buildTrayRows: the band sets the tray height budget
   buildTrayRows();
@@ -2346,6 +2393,11 @@ function renderRackVis(){
   }
   s+=rvRect(0,0,20,H,RV.panel,RV.panelDk);
   s+=rvRect(W-20,0,20,H,RV.panel,RV.panelDk);
+  /* accessories: a marker on the panel at the top / middle / bottom third */
+  accFitted(c).forEach(f=>{
+    const cy=[H*0.15,H*0.5,H*0.85-72][f.i], x=(f.k==="L")?-22:W;
+    s+=rvRect(x,cy-30,42,60,RV.tray,RV.trayDk);
+  });
 
   const pad=26;
   out.innerHTML='<svg viewBox="'+(-pad)+' '+(viewTop-pad)+' '+(W+pad*2)+' '+(viewH+pad*2)+'" '+
@@ -2496,6 +2548,7 @@ function renderVan(){
         <span>${res.fitted} tray${res.fitted===1?"":"s"}</span>
         ${kickN(c)>0?`<span>${kickN(c)}x kick</span>`:""}
         ${c.trough==="Yes"?`<span>trough ${c.troughLen}</span>`:""}
+        ${accSummary(c)?`<span>${accSummary(c)}</span>`:""}
       </div>`)}
       <div class="code${res.empty?" none":(res.shareable?"":" unshareable")}">${res.empty?"NOT CONFIGURED":(res.shareable?res.code:(isBench(c)?"WORKBENCH \u2014 NO CODE":"NO SHARE CODE"))}</div>`;
     row.addEventListener("click",()=>switchView(i));
@@ -2839,6 +2892,7 @@ function generatePDF(){
     const opts=[];
     if(hasDrawers(c))opts.push("Drawers: "+drawerStacks(c).map(b=>b.stack).join(" | "));
     if(kickN(c)>0)opts.push(kickN(c)+"x Kick"); if(c.trough==="Yes")opts.push("Trough "+c.troughLen);
+    if(accSummary(c))opts.push(accSummary(c));
     doc.text(res.empty?"—":(opts.join(", ")||"none"), cComp, rowY, {maxWidth:24});
     doc.setTextColor(...(res.empty?faint:shark)); doc.setFont("helvetica","bold"); doc.setFontSize(8.5);
     doc.text(res.empty?"—":res.total.toFixed(3)+" kg", cWt, rowY, {align:"right"});
@@ -3035,6 +3089,7 @@ function generatePDF(){
 
     secH("Components");
     spec("Kick strip", kickN(c)===0?"No":kickN(c)+"x"); spec("Trough", c.trough==="Yes"? c.troughLen+" mm":"No");
+    accFitted(c).forEach(f=>spec("Accessory \u2013 "+f.side.replace(" end panel","")+" "+f.slot.toLowerCase(), f.name));
     y+=4;
 
     // Wheel box — only show if at least one value is a real number (not TBC)

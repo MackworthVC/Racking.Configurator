@@ -1614,7 +1614,7 @@ function buildPartsList(){
       }
     }
     // Accessories on the end panels (part numbers TBC)
-    accFitted(c).forEach(f=>add("TBC",f.name,"TBC","","",c.depth,1));
+    accFitted(c).forEach(f=>add("TBC",f.name,(ACC_DB[f.name]||{}).stock||"TBC","","",c.depth,1));
     // Kick strip
     if(kickN(c)>0){
       const ksPart="RC001-009-"+KICK_SUFFIX[tLen]+"A";
@@ -1789,7 +1789,17 @@ function vanData(){
    form: up to 3 per panel, one each at the top, middle and bottom. The part numbers
    are not allocated yet, so they list as TBC — edit this table when they are. */
 const ACC_NONE="(none)";
-const ACCESSORIES=["Document holder","Coat hook","Fire extinguisher bracket"];
+const ACC_DB={
+  "Hook":{stock:"TBC"},
+  "A4 Document Holder":{stock:"VC62485452"},
+  "Spray Can Holder":{stock:"VC62485455"},
+  "Sealant Gun Holder":{stock:"BMSEALGUN"},
+  "Small Gas Bottle Holder":{stock:"VC62482604"},
+  "Large Gas Bottle Holder":{stock:"VC62483365"},
+  "Double Gas Bottle Holder":{stock:"VC62482884"},
+  "End Panel Tray":{stock:"TBC"}
+};
+const ACCESSORIES=Object.keys(ACC_DB);
 const ACC_SLOTS=["Top","Middle","Bottom"];
 const ACC_SIDES=[["L","Left end panel"],["R","Right end panel"]];
 function blankAcc(){return{L:[ACC_NONE,ACC_NONE,ACC_NONE],R:[ACC_NONE,ACC_NONE,ACC_NONE]};}
